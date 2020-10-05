@@ -1,0 +1,17 @@
+body {
+    width: 340px;
+    height: 380px;
+}
+
+#left-contents {
+    float: left;
+}
+
+#right-contents {
+    float: right;
+    text-align: center;
+}
+
+#popup_button {
+    width: 100%;
+}

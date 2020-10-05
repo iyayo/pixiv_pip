@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixiv ポップアップサムネイル</title>
+</head>
+<body>
+    <h2>画像のソース（初期値：480x960）</h2>
+    <select id="image_source">
+        <option value="360x360">360x360</option>
+        <option value="600x600">600x600</option>
+        <option value="default" selected>480x960</option>
+        <option value="600x1200">600x1200(WebP)</option>
+        <option value="master">1200x1200</option>
+        <option value="original">original</option>
+    </select>
+    <h2>ポップアップの長辺の長さ（初期値：480）</h2>
+    <input type="number" id="image_longside" value="480">（px）
+    <h3>オプション</h3>
+    <input type="checkbox" id="hide_cursor">ポップアップ中のカーソル非表示
+    <br>
+    <br>
+    <input type="checkbox" id="auto_switch">イラストの自動切り替え
+    <br>
+    切り替え間隔（初期値：2）
+    <br>
+    <input type="number" id="switch_interval" value="2" step="0.1">（秒）
+    <br>
+    <br>
+    <input type="button" id="save" value="設定を保存">
+    <span id="status" style="opacity: 0;">保存しました</span>
+
+    <script src="/js/options.js"></script>
+</body>
+</html>
