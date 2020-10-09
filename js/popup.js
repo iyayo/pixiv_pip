@@ -1,5 +1,3 @@
-let extension = true;
-
 let filter_list = {
     "edit": false,
     "blur": 0,
@@ -9,12 +7,11 @@ let filter_list = {
 }
 
 window.onload = function () {
-    let checkbox_extension = document.getElementById("extension");
     let edit = document.getElementById("edit");
     let range = document.querySelectorAll("input[type=range]");
     let status = document.getElementById("status");
     let reset_button = document.getElementById("reset");
-    let popup_button = document.getElementById("popup_button");
+    let pip_button = document.getElementById("pip_button");
 
     function sample_edit(filter_list) {
         let sample_image = document.getElementById("sample_image");
@@ -24,12 +21,7 @@ window.onload = function () {
     }
 
     function restore() {
-        chrome.storage.local.get(["extension", "filter_list"], function (storage) {
-            if (storage.extension != undefined){
-                extension = storage.extension;
-                checkbox_extension.checked = storage.extension;
-            }
-
+        chrome.storage.local.get(["filter_list"], function (storage) {
             if (storage.filter_list.edit != undefined) {
                 filter_list.edit = storage.filter_list.edit;
                 edit.checked = storage.filter_list.edit;
@@ -77,14 +69,9 @@ window.onload = function () {
 
     reset_button.addEventListener("click", reset);
     
-    popup_button.addEventListener("click", function(){
+    pip_button.addEventListener("click", function(){
         chrome.runtime.sendMessage({message: "showPopupWindow"}, function() {});
     });
-
-    checkbox_extension.addEventListener("change", function(){
-        extension = this.checked;
-        chrome.storage.local.set({ "extension": extension }, function () { });
-    })
 
     edit.addEventListener("change", function () {
         filter_list.edit = this.checked;

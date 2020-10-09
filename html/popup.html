@@ -2,15 +2,47 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/popup.css">
-    <title>Pixiv ポップアップサムネイル</title>
+    <title>pixiv PiP</title>
 </head>
 <body>
     <header>
-        <h2><input type="checkbox" id="extension" checked>Pixiv ポップアップサムネイル</h2>
+        <h2>pixiv PiP</h2>
         <hr>
     </header>
+
+    <details>
+        <summary id="updated_content"><b>ver 2.0の更新内容 - クリックして表示</b></summary>
+        <p>
+            ■<strong>PiP（Picture-in-Picture）を使用してイラストを表示するように変更しました。</strong>
+            <ul>
+                <li>編集画面下部の<strong>【Picture-in-Picture】</strong>を押すとPiPウインドウが表示されます。<br>
+                    この状態でイラストのサムネイルにカーソルを合わせると、イラストがPiPウインドウに表示されます。</li>
+            </ul>
+
+            <ul>
+                <li>イラストが複数枚ある場合は、PiPにコントローラーが表示されます。
+                    <ul>
+                        <li>前のトラック/次のトラック ＝ 前のイラスト/次のイラスト</li>
+                        <li>一時停止 ＝ イラストの自動切り替えを開始/停止</li>
+                    </ul>
+                </li>
+            </ul>
+        </p>
+        
+        <p>
+            ■イラストの自動切り替え機能をデフォルトで有効にしました。
+        </p>
+        
+        <p>
+            ■今回の仕様変更に伴い、以下の機能を削除しました。
+            <ul>
+                <li>ポップアップ中のカーソル非表示</li>
+                <li>ツールバーから拡張機能のON/OFF切り替え</li>
+            </ul>
+        </p>
+        <hr>
+    </details>
 
     <div id="left-contents">
         <h3><input type="checkbox" id="edit">フィルター</h3>
@@ -54,7 +86,7 @@
 
     <div style="clear: both;"></div>
 
-    <input type="button" id="popup_button" value="ポップアップ">
+    <button id="pip_button">Picture-in-Picture</button>
 
     <script src="/js/popup.js"></script>
 </body>

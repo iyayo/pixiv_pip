@@ -12,6 +12,21 @@ body {
     text-align: center;
 }
 
-#popup_button {
+#updated_content {
+    color: #fd9e16;
+}
+
+#pip_button {
     width: 100%;
+    height: 10%;
+    cursor: pointer;
+    margin: 10px auto;
+    border: none;
+    color: #ffffff;
+    font-size: large;
+    background-color: #0096fa;
+}
+
+#pip_button:hover {
+    background-color: #0086e0;
 }

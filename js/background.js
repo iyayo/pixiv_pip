@@ -14,21 +14,9 @@ let filter_list = {
     "saturate": 100
 }
 
-chrome.storage.local.get(["extension", "setting", "filter_list"], (storage) => {
-    if (storage.extension != undefined) {
-        extension = storage.extension;
-    }
-
+chrome.storage.local.get(["setting", "filter_list"], (storage) => {
     if (storage.setting.image_source != undefined) {
         setting.image_source = storage.setting.image_source;
-    }
-
-    if (storage.setting.image_longside != undefined) {
-        setting.image_longside = storage.setting.image_longside;
-    }
-
-    if (storage.setting.hide_cursor != undefined) {
-        setting.hide_cursor = storage.setting.hide_cursor;
     }
 
     if (storage.setting.auto_switch != undefined) {
@@ -72,10 +60,16 @@ let illustNum;
 let illustLength;
 let illustList;
 let prevIllustUrl;
+let illustAngle = 0;
+let drawLocation;
+let horizontal = 1;
+let vertical = 1;
 
 let img = new Image();
 
 img.addEventListener("load", function () {
+    illustAngle = 0;
+    horizontal = vertical = 1;
     draw(true, this.width, this.height);
 });
 
@@ -83,23 +77,36 @@ img.src = "icon/icon128.png";
 
 // キーボードショートカット
 chrome.commands.onCommand.addListener(function (command) {
-    console.log(command);
     switch (command) {
         case "image_rotate_90_clockwise":
+            drawLocation = rotationImage(90);
+            setFilter();
+            reverseImage();
+            drawImg(drawLocation.x, drawLocation.y);
             break;
         case "image_rotate_90_counterclockwise":
+            drawLocation = rotationImage(-90);
+            setFilter();
+            reverseImage();
+            drawImg(drawLocation.x, drawLocation.y);
             break;
         case "image_flip_horizontal":
+            drawLocation = rotationImage(0);
+            setFilter();
+            reverseImage("horizontal");
+            drawImg(drawLocation.x, drawLocation.y);
             break;
         case "image_flip_vertical":
+            drawLocation = rotationImage(0);
+            setFilter();
+            reverseImage("vertical");
+            drawImg(drawLocation.x, drawLocation.y);
             break;
     }
 });
 
 // Content Scriptと通信
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    console.log(request.message);
-
     if (request.message == "showPopupWindow") {
         video.play();
         if (video !== document.pictureInPictureElement) {
@@ -122,23 +129,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                     interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
                 }
 
-                navigator.mediaSession.setActionHandler('skipad', function () {
-                    console.log("click: skipad");
-                    let link = document.createElement("a");
-                    link.href = canvas.toDataURL("image/png");
-                    link.download = "test.png";
-                    link.click();
-                });
-
                 if (illustLength > 1) {
                     // 画像切り替えの再開 & 中断
                     navigator.mediaSession.setActionHandler('play', function () { });
                     navigator.mediaSession.setActionHandler('pause', function () {
                         if (interval) {
-                            console.log("pause");
                             switchPause(interval);
                         } else {
-                            console.log("play");
                             if (illustNum < illustLength - 1) {
                                 interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
                             } else if (illustNum == illustLength - 1) {
@@ -151,7 +148,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                     // 前の画像 & 次の画像
                     navigator.mediaSession.setActionHandler('previoustrack', function () {
                         if (illustNum > 0) {
-                            console.log("prevIllust");
                             switchPause(interval);
                             illustNum = --illustNum;
                             img.src = illustList[illustNum];
@@ -159,7 +155,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                     });
                     navigator.mediaSession.setActionHandler('nexttrack', function () {
                         if (illustNum < illustLength - 1) {
-                            console.log("nextIllust");
                             switchPause(interval);
                             illustNum = ++illustNum;
                             img.src = illustList[illustNum];
@@ -179,9 +174,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 video.addEventListener("enterpictureinpicture", function () {
-    if (illustLength > 1) {
-        interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
-    }
+    // if (illustLength > 1) {
+    //     interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
+    // }
 })
 
 video.addEventListener("leavepictureinpicture", function () {
@@ -239,18 +234,82 @@ function switchImage(url, max) {
 
         if (illustNum == max - 1) {
             switchPause(interval);
-            console.log("switchEnd");
         }
     } else {
         switchPause(interval);
-        console.log("switchEnd");
     }
 }
 
 function switchPause() {
-    console.log("clearInterval");
     clearInterval(interval);
     interval = false;
+}
+
+function rotationImage(angle){
+    if (Math.abs(illustAngle) == 360){
+        illustAngle = 0;
+    }
+
+    illustAngle = illustAngle + angle;
+
+    clearCanvas();
+
+    if (angle == 0){
+        setCanvas(canvas.width, canvas.height);
+    } else {
+        setCanvas(canvas.height, canvas.width);
+    }
+
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate(illustAngle*Math.PI/180);
+
+    switch (Math.abs(illustAngle)) {
+        case 90:
+            return {"x": -canvas.height / 2, "y": -canvas.width / 2};
+            break;
+        
+        case 270:
+            return {"x": -canvas.height / 2, "y": -canvas.width / 2};
+            break; 
+
+        case 0:
+            return {"x": -canvas.width / 2, "y": -canvas.height / 2};
+            break;
+
+        case 180:
+            return {"x": -canvas.width / 2, "y": -canvas.height / 2};
+            break;
+        
+        case 360:
+            return {"x": -canvas.width / 2, "y": -canvas.height / 2};
+            break;
+    }
+}
+
+function reverseImage(dir){
+    if (dir == "horizontal"){
+        switch (horizontal) {
+            case 1:
+                horizontal = -1;
+                break;
+        
+            case -1:
+                horizontal = 1;
+                break;
+        }
+    } else if (dir == "vertical"){
+        switch (vertical) {
+            case 1:
+                vertical = -1;
+                break;
+        
+            case -1:
+                vertical = 1;
+                break;
+        }
+    }
+
+    ctx.scale(horizontal, vertical);
 }
 
 // refererの書き換え
@@ -272,14 +331,15 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
 
 chrome.storage.local.onChanged.addListener(function (object) {
     if (object.setting) {
-        let newSetting = object.setting.newValue;
-        setting = newSetting;
+        setting = object.setting.newValue;
     }
 
     if (object.filter_list) {
-        let newFilter = object.filter_list.newValue;
-        filter_list = newFilter;
+        filter_list = object.filter_list.newValue;
 
-        draw(true, img.width, img.height);
+        drawLocation = rotationImage(0);
+        setFilter();
+        reverseImage();
+        drawImg(drawLocation.x, drawLocation.y);
     }
 });

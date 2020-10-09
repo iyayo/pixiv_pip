@@ -8,22 +8,10 @@ function restore(){
             });
         }
 
-        if (storage.setting.image_longside != undefined) {
-            document.getElementById("image_longside").value = storage.setting.image_longside;
-        } else {
-            document.getElementById("image_longside").value = "480";
-        }
-
-        if(storage.setting.hide_cursor != undefined) {
-            document.getElementById("hide_cursor").checked = storage.setting.hide_cursor;
-        } else [
-            document.getElementById("hide_cursor").checked = false
-        ]
-
         if(storage.setting.auto_switch != undefined) {
             document.getElementById("auto_switch").checked = storage.setting.auto_switch;
         } else {
-            document.getElementById("auto_switch").checked = false
+            document.getElementById("auto_switch").checked = true;
         }
 
         if(storage.setting.switch_interval != undefined) {
@@ -37,8 +25,6 @@ function restore(){
 function save() {
     let setting = {
         "image_source": document.getElementById("image_source").value,
-        "image_longside": document.getElementById("image_longside").value,
-        "hide_cursor": document.getElementById("hide_cursor").checked,
         "auto_switch": document.getElementById("auto_switch").checked,
         "switch_interval": document.getElementById("switch_interval").value
     }

@@ -1,8 +1,8 @@
 {
-  "name": "Pixiv PiP",
+  "name": "pixiv PiP",
   "version": "2.0",
   "manifest_version": 2,
-  "description": "Pixivのサムネイルをポップアップさせる拡張機能です。サムネイルにカーソルを合わせるとポップアップされます。",
+  "description": "pixivのイラストをPiP（Picture-in-Picture）で表示する拡張機能です。",
   "icons" : {
     "16" : "icon/icon16.png",
     "32" : "icon/icon32.png",
@@ -14,13 +14,12 @@
       "16": "icon/icon16.png",
       "32": "icon/icon32.png"
     },
-    "default_title": "クリックでフィルター設定を表示",
+    "default_title": "クリックで編集画面を表示",
     "default_popup": "html/popup.html"
   },
   "content_scripts": [
     {
       "js": ["js/script.js"],
-      "css": ["css/script.css"],
       "matches": ["https://www.pixiv.net/*"]
     }
   ],
@@ -30,11 +29,9 @@
   },
   "permissions": [
     "storage",
-    "tabs",
     "webRequest",
     "webRequestBlocking",
-    "https://i.pximg.net/*",
-    "https://www.pixiv.net/*"
+    "https://i.pximg.net/*"
   ],
   "commands": {
     "image_rotate_90_clockwise": {
