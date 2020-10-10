@@ -19,6 +19,18 @@ function restore(){
         } else {
             document.getElementById("switch_interval").value = "2";
         }
+
+        if(storage.setting.custom_button != undefined) {
+            document.getElementById("custom_button").checked = storage.setting.custom_button;
+        }
+
+        if (storage.setting.button_allocation != undefined){
+            document.querySelectorAll("#button_allocation > option").forEach(element => {
+                if (element.value == storage.setting.button_allocation){
+                    element.selected = true;
+                }
+            });
+        }
     });
 }
 
@@ -26,7 +38,9 @@ function save() {
     let setting = {
         "image_source": document.getElementById("image_source").value,
         "auto_switch": document.getElementById("auto_switch").checked,
-        "switch_interval": document.getElementById("switch_interval").value
+        "switch_interval": document.getElementById("switch_interval").value,
+        "custom_button": document.getElementById("custom_button").checked,
+        "button_allocation": document.getElementById("button_allocation").value
     }
 
     chrome.storage.local.set({"setting": setting}, function () {

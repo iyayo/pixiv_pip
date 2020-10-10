@@ -3,7 +3,9 @@ let setting = {
     "image_longside": "480",
     "hide_cursor": false,
     "auto_switch": true,
-    "switch_interval": "2"
+    "switch_interval": "2",
+    "custom_button": false,
+    "button_allocation": "play_pause"
 }
 
 let filter_list = {
@@ -25,6 +27,14 @@ chrome.storage.local.get(["setting", "filter_list"], (storage) => {
 
     if (storage.setting.switch_interval != undefined) {
         setting.switch_interval = storage.setting.switch_interval;
+    }
+
+    if (storage.setting.custom_button != undefined) {
+        setting.custom_button = storage.setting.custom_button;
+    }
+
+    if (storage.setting.button_allocation != undefined) {
+        setting.button_allocation = storage.setting.button_allocation;
     }
 
     if (storage.filter_list.edit != undefined && storage.filter_list.edit != false) {
@@ -132,6 +142,29 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
                 if (setting.auto_switch && illustLength > 1 && illustNum < illustLength - 1) {
                     interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
+                }
+
+                if (setting.custom_button){
+                    navigator.mediaSession.setActionHandler('skipad', function () {
+                        if (setting.button_allocation == "play_pause") {
+                            if (interval) {
+                                switchPause(interval);
+                            } else {
+                                if (illustNum < illustLength - 1) {
+                                    interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
+                                } else if (illustNum == illustLength - 1) {
+                                    illustNum = 0;
+                                    img.src = illustList[illustNum];
+                                    interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
+                                }
+                            }
+                        } else if (setting.button_allocation == "save") {
+                            var a = document.createElement("a");
+                            a.href = canvas.toDataURL("image/jpeg");
+                            a.download = "download.jpg";
+                            a.click();
+                        }
+                    });
                 }
 
                 if (illustLength > 1) {
