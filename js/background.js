@@ -188,6 +188,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                             a.click();
                         }
                     });
+                } else {
+                    navigator.mediaSession.setActionHandler('skipad', null);
                 }
 
                 if (illustLength > 1) {
