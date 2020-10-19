@@ -97,69 +97,81 @@ window.onload = function () {
     const regex = /c\/.*\/(img-master|custom-thumb)/;
     const regex2 = /(square|custom)/;
     const regex_original = /_(square|custom|master)\d+/;
+    const ugoira_regex = /.*うごイラ$/;
+    const ugoira_regex2 = /ugoku-illust/;
+    let prevSrc;
 
     document.addEventListener("mouseover", function (event) {
         let url;
         if (event.target.tagName == "IMG") {
-            url = event.target.src;
-        } else if (event.target.style.backgroundImage) {
-            url = event.target.style.backgroundImage.match(/https.*\.jpg/)[0];
-        }
-
-        if (/.*うごイラ$/.test(event.target.alt) || /ugoku-illust/.test(event.target.offsetParent.className)) {
-            url = url.replace(regex, "img-zip-ugoira");
-            url = url.replace(/(square1200.jpg|custom1200.jpg|master1200.jpg)/, "ugoira600x600.zip");
-
-            Zip.inflate_file(url, function (zip) {
-                let urlList = [];
-                let i = 1;
-                urlList[0] = { "type": "ugoira" };
-
-                for (let key in zip.files) {
-                    urlList[i] = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(zip.files[key].data)));
-                    i++;
+            if (prevSrc != event.target.src){
+                url = event.target.src;
+                if (ugoira_regex.test(event.target.alt) || ugoira_regex2.test(event.target.offsetParent.className)) {
+                    prevSrc = event.target.src;
+                    url = url.replace(regex, "img-zip-ugoira");
+                    url = url.replace(/(square1200.jpg|custom1200.jpg|master1200.jpg)/, "ugoira600x600.zip");
+        
+                    Zip.inflate_file(url, function (zip) {
+                        let urlList = [];
+                        let i = 1;
+                        urlList[0] = { "type": "ugoira" };
+        
+                        for (let key in zip.files) {
+                            urlList[i] = "data:image/jpeg;base64," + _arrayBufferToBase64(zip.files[key].inflate());
+                            i++;
+                        }
+        
+                        sendMsg(urlList);
+                    });
+        
+                    function _arrayBufferToBase64(buffer) {
+                        let binary = '';
+                        for (let j = 0; j < buffer.byteLength; j++) {
+                            binary += String.fromCharCode(buffer[j]);
+                        }
+                        return window.btoa(binary);
+                    }
+        
+                } else if (regex.test(url)) {
+                    prevSrc = event.target.src;
+                    if (setting.image_source == "default") {
+                        url = url.replace(regex, "c/480x960/img-master");
+        
+                    } else if (setting.image_source == "360x360") {
+                        url = url.replace(regex, "c/360x360_70/img-master");
+        
+                    } else if (setting.image_source == "600x600") {
+                        url = url.replace(regex, "c/600x600/img-master");
+        
+                    } else if (setting.image_source == "600x1200") {
+                        url = url.replace(regex, "c/600x1200_90_webp/img-master");
+        
+                    } else if (setting.image_source == "master") {
+                        url = url.replace(regex, "img-master");
+        
+                    } else if (setting.image_source == "original") {
+                        // url = url.replace(regex, "img-original");
+                        // url = url.replace(regex_original, "");
+                        url = url.replace(regex, "img-master");
+                    }
+        
+                    url = url.replace(regex2, "master");
+        
+                    let illustNum = event.target.parentNode.parentNode.querySelector("span:not([class])");
+                    let urlList = [];
+                    urlList[0] = { "type": "illust" };
+        
+                    if (illustNum) {
+                        for (let i = 1; i <= illustNum.innerText; i++) {
+                            urlList[i] = url.replace("p0", `p${i - 1}`);
+                        }
+                    } else {
+                        urlList[1] = url;
+                    }
+        
+                    sendMsg(urlList);
                 }
-
-                sendMsg(urlList);
-            });
-
-        } else if (regex.test(url)) {
-            if (setting.image_source == "default") {
-                url = url.replace(regex, "c/480x960/img-master");
-
-            } else if (setting.image_source == "360x360") {
-                url = url.replace(regex, "c/360x360_70/img-master");
-
-            } else if (setting.image_source == "600x600") {
-                url = url.replace(regex, "c/600x600/img-master");
-
-            } else if (setting.image_source == "600x1200") {
-                url = url.replace(regex, "c/600x1200_90_webp/img-master");
-
-            } else if (setting.image_source == "master") {
-                url = url.replace(regex, "img-master");
-
-            } else if (setting.image_source == "original") {
-                // url = url.replace(regex, "img-original");
-                // url = url.replace(regex_original, "");
-                url = url.replace(regex, "img-master");
             }
-
-            url = url.replace(regex2, "master");
-
-            let illustNum = event.target.parentNode.parentNode.querySelector("span:not([class])");
-            let urlList = [];
-            urlList[0] = { "type": "illust" };
-
-            if (illustNum) {
-                for (let i = 1; i <= illustNum.innerText; i++) {
-                    urlList[i] = url.replace("p0", `p${i - 1}`);
-                }
-            } else {
-                urlList[1] = url;
-            }
-
-            sendMsg(urlList);
         }
     });
 

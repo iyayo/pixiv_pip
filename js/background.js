@@ -83,7 +83,6 @@ let interval;
 let illustNum;
 let illustLength;
 let illustList;
-let prevIllustUrl;
 let illustAngle = 0;
 let drawLocation;
 let horizontal = 1;
@@ -136,7 +135,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             case "illust":
                 interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
                 break;
-        
+
             case "ugoira":
                 interval = setInterval(switchImage, setting.ugoira_interval, illustList, illustLength);
                 break;
@@ -153,49 +152,21 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         }
     } else {
         illustList = request.message;
+        switchPause(interval);
+        illustNum = 1;
+        illustLength = illustList.length - 1;
 
-        if (illustList[1] !== prevIllustUrl) {
-            switchPause(interval);
-            illustNum = 1;
-            illustLength = illustList.length - 1;
+        if (video == document.pictureInPictureElement) {
+            img.src = illustList[illustNum];
 
-            if (video == document.pictureInPictureElement) {
-                img.src = prevIllustUrl = illustList[illustNum];
+            if (setting.auto_switch && illustLength > 1 && illustNum < illustLength) {
+                startInterval(illustList[0].type);
+            }
 
-                if (setting.auto_switch && illustLength > 1 && illustNum < illustLength) {
-                    startInterval(illustList[0].type);
-                }
-
-                // カスタムボタン（skipad）
-                if (setting.custom_button){
-                    navigator.mediaSession.setActionHandler('skipad', function () {
-                        if (setting.button_allocation == "play_pause") {
-                            if (interval) {
-                                switchPause(interval);
-                            } else {
-                                if (illustNum < illustLength) {
-                                    startInterval(illustList[0].type);
-                                } else if (illustNum == illustLength) {
-                                    illustNum = 1;
-                                    img.src = illustList[illustNum];
-                                    startInterval(illustList[0].type);
-                                }
-                            }
-                        } else if (setting.button_allocation == "save") {
-                            var a = document.createElement("a");
-                            a.href = canvas.toDataURL("image/jpeg");
-                            a.download = "download.jpg";
-                            a.click();
-                        }
-                    });
-                } else {
-                    navigator.mediaSession.setActionHandler('skipad', null);
-                }
-
-                if (illustLength > 1) {
-                    // 画像切り替えの再開 & 中断
-                    navigator.mediaSession.setActionHandler('play', function () { });
-                    navigator.mediaSession.setActionHandler('pause', function () {
+            // カスタムボタン（skipad）
+            if (setting.custom_button) {
+                navigator.mediaSession.setActionHandler('skipad', function () {
+                    if (setting.button_allocation == "play_pause") {
                         if (interval) {
                             switchPause(interval);
                         } else {
@@ -207,28 +178,53 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                                 startInterval(illustList[0].type);
                             }
                         }
-                    });
-                    // 前の画像 & 次の画像
-                    navigator.mediaSession.setActionHandler('previoustrack', function () {
-                        if (illustNum > 1) {
-                            switchPause(interval);
-                            illustNum = --illustNum;
-                            img.src = illustList[illustNum];
-                        }
-                    });
-                    navigator.mediaSession.setActionHandler('nexttrack', function () {
+                    } else if (setting.button_allocation == "save") {
+                        var a = document.createElement("a");
+                        a.href = canvas.toDataURL("image/jpeg");
+                        a.download = "download.jpg";
+                        a.click();
+                    }
+                });
+            } else {
+                navigator.mediaSession.setActionHandler('skipad', null);
+            }
+
+            if (illustLength > 1) {
+                // 画像切り替えの再開 & 中断
+                navigator.mediaSession.setActionHandler('play', function () { });
+                navigator.mediaSession.setActionHandler('pause', function () {
+                    if (interval) {
+                        switchPause(interval);
+                    } else {
                         if (illustNum < illustLength) {
-                            switchPause(interval);
-                            illustNum = ++illustNum;
+                            startInterval(illustList[0].type);
+                        } else if (illustNum == illustLength) {
+                            illustNum = 1;
                             img.src = illustList[illustNum];
+                            startInterval(illustList[0].type);
                         }
-                    });
-                } else {
-                    navigator.mediaSession.setActionHandler('play', null);
-                    navigator.mediaSession.setActionHandler('pause', null);
-                    navigator.mediaSession.setActionHandler('previoustrack', null);
-                    navigator.mediaSession.setActionHandler('nexttrack', null);
-                }
+                    }
+                });
+                // 前の画像 & 次の画像
+                navigator.mediaSession.setActionHandler('previoustrack', function () {
+                    if (illustNum > 1) {
+                        switchPause(interval);
+                        illustNum = --illustNum;
+                        img.src = illustList[illustNum];
+                    }
+                });
+                navigator.mediaSession.setActionHandler('nexttrack', function () {
+                    if (illustNum < illustLength) {
+                        switchPause(interval);
+                        illustNum = ++illustNum;
+                        img.src = illustList[illustNum];
+                    }
+                });
+            } else {
+                navigator.mediaSession.setActionHandler('play', null);
+                navigator.mediaSession.setActionHandler('pause', null);
+                navigator.mediaSession.setActionHandler('previoustrack', null);
+                navigator.mediaSession.setActionHandler('nexttrack', null);
             }
         }
     }
@@ -274,11 +270,11 @@ function setCanvas(width, height) {
 }
 
 function drawImg(x, y) {
-    if (!x){
+    if (!x) {
         x = 0;
     }
 
-    if (!y){
+    if (!y) {
         y = 0;
     }
     ctx.drawImage(img, x, y, img.width, img.height);
@@ -297,11 +293,11 @@ function switchImage(url, max) {
 
         if (illustList[0].type == "illust" && illustNum == max) {
             switchPause(interval);
-        } else if (illustList[0].type == "ugoira" && illustNum == max && setting.ugoira_loop){
+        } else if (illustList[0].type == "ugoira" && illustNum == max && setting.ugoira_loop) {
             illustNum = 0;
         }
     } else {
-        if (illustList[0].type == "ugoira" && setting.ugoira_loop && illustNum == max){
+        if (illustList[0].type == "ugoira" && setting.ugoira_loop && illustNum == max) {
             illustNum = 0;
         } else {
             switchPause(interval);
@@ -314,8 +310,8 @@ function switchPause() {
     interval = false;
 }
 
-function rotationImage(angle){
-    if (Math.abs(illustAngle) == 360){
+function rotationImage(angle) {
+    if (Math.abs(illustAngle) == 360) {
         illustAngle = 0;
     }
 
@@ -323,55 +319,55 @@ function rotationImage(angle){
 
     clearCanvas();
 
-    if (angle == 0){
+    if (angle == 0) {
         setCanvas(canvas.width, canvas.height);
     } else {
         setCanvas(canvas.height, canvas.width);
     }
 
     ctx.translate(canvas.width / 2, canvas.height / 2);
-    ctx.rotate(illustAngle*Math.PI/180);
+    ctx.rotate(illustAngle * Math.PI / 180);
 
     switch (Math.abs(illustAngle)) {
         case 90:
-            return {"x": -canvas.height / 2, "y": -canvas.width / 2};
+            return { "x": -canvas.height / 2, "y": -canvas.width / 2 };
             break;
-        
+
         case 270:
-            return {"x": -canvas.height / 2, "y": -canvas.width / 2};
-            break; 
+            return { "x": -canvas.height / 2, "y": -canvas.width / 2 };
+            break;
 
         case 0:
-            return {"x": -canvas.width / 2, "y": -canvas.height / 2};
+            return { "x": -canvas.width / 2, "y": -canvas.height / 2 };
             break;
 
         case 180:
-            return {"x": -canvas.width / 2, "y": -canvas.height / 2};
+            return { "x": -canvas.width / 2, "y": -canvas.height / 2 };
             break;
-        
+
         case 360:
-            return {"x": -canvas.width / 2, "y": -canvas.height / 2};
+            return { "x": -canvas.width / 2, "y": -canvas.height / 2 };
             break;
     }
 }
 
-function reverseImage(dir){
-    if (dir == "horizontal"){
+function reverseImage(dir) {
+    if (dir == "horizontal") {
         switch (horizontal) {
             case 1:
                 horizontal = -1;
                 break;
-        
+
             case -1:
                 horizontal = 1;
                 break;
         }
-    } else if (dir == "vertical"){
+    } else if (dir == "vertical") {
         switch (vertical) {
             case 1:
                 vertical = -1;
                 break;
-        
+
             case -1:
                 vertical = 1;
                 break;
