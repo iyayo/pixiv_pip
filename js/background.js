@@ -4,6 +4,8 @@ let setting = {
     "hide_cursor": false,
     "auto_switch": true,
     "switch_interval": "2",
+    "ugoira_interval": "60",
+    "ugoira_loop": true,
     "custom_button": false,
     "button_allocation": "play_pause"
 }
@@ -27,6 +29,14 @@ chrome.storage.local.get(["setting", "filter_list"], (storage) => {
 
     if (storage.setting.switch_interval != undefined) {
         setting.switch_interval = storage.setting.switch_interval;
+    }
+
+    if (storage.setting.ugoira_loop != undefined) {
+        setting.ugoira_loop = storage.setting.ugoira_loop;
+    }
+
+    if (storage.setting.ugoira_interval != undefined) {
+        setting.ugoira_interval = storage.setting.ugoira_interval;
     }
 
     if (storage.setting.custom_button != undefined) {
@@ -121,6 +131,18 @@ chrome.commands.onCommand.addListener(function (command) {
 
 // Content Scriptと通信
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    function startInterval(type) {
+        switch (type) {
+            case "illust":
+                interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
+                break;
+        
+            case "ugoira":
+                interval = setInterval(switchImage, setting.ugoira_interval, illustList, illustLength);
+                break;
+        }
+    }
+
     if (request.message == "showPopupWindow") {
         video.play();
         audio.play();
@@ -132,30 +154,31 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     } else {
         illustList = request.message;
 
-        if (illustList[0] !== prevIllustUrl) {
+        if (illustList[1] !== prevIllustUrl) {
             switchPause(interval);
-            illustNum = 0;
-            illustLength = illustList.length;
+            illustNum = 1;
+            illustLength = illustList.length - 1;
 
             if (video == document.pictureInPictureElement) {
                 img.src = prevIllustUrl = illustList[illustNum];
 
-                if (setting.auto_switch && illustLength > 1 && illustNum < illustLength - 1) {
-                    interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
+                if (setting.auto_switch && illustLength > 1 && illustNum < illustLength) {
+                    startInterval(illustList[0].type);
                 }
 
+                // カスタムボタン（skipad）
                 if (setting.custom_button){
                     navigator.mediaSession.setActionHandler('skipad', function () {
                         if (setting.button_allocation == "play_pause") {
                             if (interval) {
                                 switchPause(interval);
                             } else {
-                                if (illustNum < illustLength - 1) {
-                                    interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
-                                } else if (illustNum == illustLength - 1) {
-                                    illustNum = 0;
+                                if (illustNum < illustLength) {
+                                    startInterval(illustList[0].type);
+                                } else if (illustNum == illustLength) {
+                                    illustNum = 1;
                                     img.src = illustList[illustNum];
-                                    interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
+                                    startInterval(illustList[0].type);
                                 }
                             }
                         } else if (setting.button_allocation == "save") {
@@ -174,25 +197,25 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         if (interval) {
                             switchPause(interval);
                         } else {
-                            if (illustNum < illustLength - 1) {
-                                interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
-                            } else if (illustNum == illustLength - 1) {
-                                illustNum = 0;
+                            if (illustNum < illustLength) {
+                                startInterval(illustList[0].type);
+                            } else if (illustNum == illustLength) {
+                                illustNum = 1;
                                 img.src = illustList[illustNum];
-                                interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
+                                startInterval(illustList[0].type);
                             }
                         }
                     });
                     // 前の画像 & 次の画像
                     navigator.mediaSession.setActionHandler('previoustrack', function () {
-                        if (illustNum > 0) {
+                        if (illustNum > 1) {
                             switchPause(interval);
                             illustNum = --illustNum;
                             img.src = illustList[illustNum];
                         }
                     });
                     navigator.mediaSession.setActionHandler('nexttrack', function () {
-                        if (illustNum < illustLength - 1) {
+                        if (illustNum < illustLength) {
                             switchPause(interval);
                             illustNum = ++illustNum;
                             img.src = illustList[illustNum];
@@ -266,15 +289,21 @@ function setFilter() {
 }
 
 function switchImage(url, max) {
-    if (illustNum < max - 1) {
+    if (illustNum < max) {
         illustNum = ++illustNum;
         img.src = url[illustNum];
 
-        if (illustNum == max - 1) {
+        if (illustList[0].type == "illust" && illustNum == max) {
             switchPause(interval);
+        } else if (illustList[0].type == "ugoira" && illustNum == max && setting.ugoira_loop){
+            illustNum = 0;
         }
     } else {
-        switchPause(interval);
+        if (illustList[0].type == "ugoira" && setting.ugoira_loop && illustNum == max){
+            illustNum = 0;
+        } else {
+            switchPause(interval);
+        }
     }
 }
 

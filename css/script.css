@@ -1,0 +1,3 @@
+._work.ugoku-illust::after, ._work::before {
+    content: none !important;
+}

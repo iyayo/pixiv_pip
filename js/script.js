@@ -2,8 +2,12 @@ let setting = {
     "image_source": "default",
     "image_longside": "480",
     "hide_cursor": false,
-    "auto_switch": false,
-    "switch_interval": "2000"
+    "auto_switch": true,
+    "switch_interval": "2",
+    "ugoira_interval": "60",
+    "ugoira_loop": true,
+    "custom_button": false,
+    "button_allocation": "play_pause"
 }
 
 let filter_list = {
@@ -14,17 +18,9 @@ let filter_list = {
     "saturate": 100
 }
 
-chrome.storage.local.get(["extension", "setting", "filter_list"], (storage) => {
+chrome.storage.local.get(["setting", "filter_list"], (storage) => {
     if (storage.setting.image_source != undefined) {
         setting.image_source = storage.setting.image_source;
-    }
-
-    if (storage.setting.image_longside != undefined) {
-        setting.image_longside = storage.setting.image_longside;
-    }
-
-    if (storage.setting.hide_cursor != undefined) {
-        setting.hide_cursor = storage.setting.hide_cursor;
     }
 
     if (storage.setting.auto_switch != undefined) {
@@ -33,6 +29,22 @@ chrome.storage.local.get(["extension", "setting", "filter_list"], (storage) => {
 
     if (storage.setting.switch_interval != undefined) {
         setting.switch_interval = storage.setting.switch_interval;
+    }
+
+    if (storage.setting.ugoira_loop != undefined) {
+        setting.ugoira_loop = storage.setting.ugoira_loop;
+    }
+
+    if (storage.setting.ugoira_interval != undefined) {
+        setting.ugoira_interval = storage.setting.ugoira_interval;
+    }
+
+    if (storage.setting.custom_button != undefined) {
+        setting.custom_button = storage.setting.custom_button;
+    }
+
+    if (storage.setting.button_allocation != undefined) {
+        setting.button_allocation = storage.setting.button_allocation;
     }
 
     if (storage.filter_list.edit != undefined && storage.filter_list.edit != false) {
@@ -61,23 +73,6 @@ window.onload = function () {
     const regex2 = /(square|custom)/;
     const regex_original = /_(square|custom|master)\d+/;
 
-    if (location.pathname == "/bookmark.php") {
-        function removeClass() {
-            let classElement = document.querySelectorAll(".work._work");
-
-            classElement.forEach(element => {
-                element.classList.remove("work", "_work");
-            });
-        }
-
-        removeClass();
-        const observer = new MutationObserver(removeClass);
-        const target = document.querySelector("ul._image-items.no-response.gtm-illust-recommend-zone");
-        if (target) {
-            observer.observe(target, { childList: true });
-        }
-    }
-
     document.addEventListener("mouseover", function (event) {
         let url;
         if (event.target.tagName == "IMG") {
@@ -86,7 +81,24 @@ window.onload = function () {
             url = event.target.style.backgroundImage.match(/https.*\.jpg/)[0];
         }
 
-        if (regex.test(url)) {
+        if (/.*うごイラ$/.test(event.target.alt) || /ugoku-illust/.test(event.target.offsetParent.className)) {
+            url = url.replace(regex, "img-zip-ugoira");
+            url = url.replace(/(square1200.jpg|custom1200.jpg|master1200.jpg)/, "ugoira600x600.zip");
+
+            Zip.inflate_file(url, function (zip) {
+                let urlList = [];
+                let i = 1;
+                urlList[0] = { "type": "ugoira" };
+
+                for (let key in zip.files) {
+                    urlList[i] = "data:image/jpeg;base64," + btoa(String.fromCharCode.apply(null, new Uint8Array(zip.files[key].data)));
+                    i++;
+                }
+
+                sendMsg(urlList);
+            });
+
+        } else if (regex.test(url)) {
             if (setting.image_source == "default") {
                 url = url.replace(regex, "c/480x960/img-master");
 
@@ -112,18 +124,23 @@ window.onload = function () {
 
             let illustNum = event.target.parentNode.parentNode.querySelector("span:not([class])");
             let urlList = [];
+            urlList[0] = { "type": "illust" };
 
             if (illustNum) {
-                for (let i = 0; i < illustNum.innerText; i++) {
-                    urlList[i] = url.replace("p0", `p${i}`);
+                for (let i = 1; i <= illustNum.innerText; i++) {
+                    urlList[i] = url.replace("p0", `p${i - 1}`);
                 }
             } else {
-                urlList[0] = url;
+                urlList[1] = url;
             }
 
-            chrome.runtime.sendMessage({ message: urlList }, function () { });
+            sendMsg(urlList);
         }
     });
+
+    function sendMsg(msg){
+        chrome.runtime.sendMessage({ message: msg }, function () {});
+    }
 
     chrome.storage.local.onChanged.addListener(function (object) {
         if (object.setting) {
