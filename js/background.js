@@ -19,51 +19,15 @@ let filter_list = {
 }
 
 chrome.storage.local.get(["setting", "filter_list"], (storage) => {
-    if (storage.setting.image_source != undefined) {
-        setting.image_source = storage.setting.image_source;
-    }
-
-    if (storage.setting.auto_switch != undefined) {
-        setting.auto_switch = storage.setting.auto_switch;
-    }
-
-    if (storage.setting.switch_interval != undefined) {
-        setting.switch_interval = storage.setting.switch_interval;
-    }
-
-    if (storage.setting.ugoira_loop != undefined) {
-        setting.ugoira_loop = storage.setting.ugoira_loop;
-    }
-
-    if (storage.setting.ugoira_interval != undefined) {
-        setting.ugoira_interval = storage.setting.ugoira_interval;
-    }
-
-    if (storage.setting.custom_button != undefined) {
-        setting.custom_button = storage.setting.custom_button;
-    }
-
-    if (storage.setting.button_allocation != undefined) {
-        setting.button_allocation = storage.setting.button_allocation;
-    }
-
-    if (storage.filter_list.edit != undefined && storage.filter_list.edit != false) {
-        filter_list.edit = true;
-
-        if (storage.filter_list.blur != undefined) {
-            filter_list.blur = storage.filter_list.blur;
+    for (let key in storage.setting){
+        if (storage.setting[key] !== undefined){
+            setting[key] = storage.setting[key];
         }
+    }
 
-        if (storage.filter_list.brightness != undefined) {
-            filter_list.brightness = storage.filter_list.brightness;
-        }
-
-        if (storage.filter_list.contrast != undefined) {
-            filter_list.contrast = storage.filter_list.contrast;
-        }
-
-        if (storage.filter_list.saturate != undefined) {
-            filter_list.saturate = storage.filter_list.saturate;
+    for (let key in storage.filter_list){
+        if (storage.filter_list[key] !== undefined){
+            filter_list[key] = storage.filter_list[key];
         }
     }
 });
