@@ -184,7 +184,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         case "save":
                             var a = document.createElement("a");
                             a.href = canvas.toDataURL("image/jpeg");
-                            a.download = "download.jpg";
+                            a.download =  `${illustList[0].id}_p${illustNum - 1}.jpg`
                             a.click();
                             break;
                     }

@@ -114,7 +114,11 @@ window.onload = function () {
                     Zip.inflate_file(url, function (zip) {
                         let urlList = [];
                         let i = 1;
-                        urlList[0] = { "type": "ugoira" };
+                        let illustId = url.match(/.*\/(\d+)_/)[1];
+                        urlList[0] = {
+                            "type": "ugoira",
+                            "id": illustId
+                        };
         
                         for (let key in zip.files) {
                             urlList[i] = "data:image/jpeg;base64," + _arrayBufferToBase64(zip.files[key].inflate());
@@ -156,10 +160,14 @@ window.onload = function () {
                     }
         
                     url = url.replace(regex2, "master");
-        
+
+                    let illustId = url.match(/.*\/(\d+)_/)[1];
                     let illustNum = event.target.parentNode.parentNode.querySelector("span:not([class])");
                     let urlList = [];
-                    urlList[0] = { "type": "illust" };
+                    urlList[0] = { 
+                        "type": "illust",
+                        "id": illustId
+                    };
         
                     if (illustNum) {
                         for (let i = 1; i <= illustNum.innerText; i++) {
