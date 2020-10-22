@@ -166,23 +166,27 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             // カスタムボタン（skipad）
             if (setting.custom_button) {
                 navigator.mediaSession.setActionHandler('skipad', function () {
-                    if (setting.button_allocation == "play_pause") {
-                        if (interval) {
-                            switchPause(interval);
-                        } else {
-                            if (illustNum < illustLength) {
-                                startInterval(illustList[0].type);
-                            } else if (illustNum == illustLength) {
-                                illustNum = 1;
-                                img.src = illustList[illustNum];
-                                startInterval(illustList[0].type);
+                    switch (setting.button_allocation) {
+                        case "play_pause":
+                            if (interval) {
+                                switchPause(interval);
+                            } else {
+                                if (illustNum < illustLength) {
+                                    startInterval(illustList[0].type);
+                                } else if (illustNum == illustLength) {
+                                    illustNum = 1;
+                                    img.src = illustList[illustNum];
+                                    startInterval(illustList[0].type);
+                                }
                             }
-                        }
-                    } else if (setting.button_allocation == "save") {
-                        var a = document.createElement("a");
-                        a.href = canvas.toDataURL("image/jpeg");
-                        a.download = "download.jpg";
-                        a.click();
+                            break;
+                    
+                        case "save":
+                            var a = document.createElement("a");
+                            a.href = canvas.toDataURL("image/jpeg");
+                            a.download = "download.jpg";
+                            a.click();
+                            break;
                     }
                 });
             } else {
