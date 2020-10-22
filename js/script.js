@@ -138,25 +138,33 @@ window.onload = function () {
         
                 } else if (regex.test(url)) {
                     prevSrc = event.target.src;
-                    if (setting.image_source == "default") {
-                        url = url.replace(regex, "c/480x960/img-master");
-        
-                    } else if (setting.image_source == "360x360") {
-                        url = url.replace(regex, "c/360x360_70/img-master");
-        
-                    } else if (setting.image_source == "600x600") {
-                        url = url.replace(regex, "c/600x600/img-master");
-        
-                    } else if (setting.image_source == "600x1200") {
-                        url = url.replace(regex, "c/600x1200_90_webp/img-master");
-        
-                    } else if (setting.image_source == "master") {
-                        url = url.replace(regex, "img-master");
-        
-                    } else if (setting.image_source == "original") {
-                        // url = url.replace(regex, "img-original");
-                        // url = url.replace(regex_original, "");
-                        url = url.replace(regex, "img-master");
+
+                    switch (setting.image_source) {
+                        case "default":
+                            url = url.replace(regex, "c/480x960/img-master");
+                            break;
+
+                        case "360x360":
+                            url = url.replace(regex, "c/360x360_70/img-master");
+                            break;
+                        
+                        case "600x600":
+                            url = url.replace(regex, "c/600x600/img-master");
+                            break;
+                        
+                        case "600x1200":
+                            url = url.replace(regex, "c/600x1200_90_webp/img-master");
+                            break;
+                        
+                        case "master":
+                            url = url.replace(regex, "img-master");
+                            break;
+
+                        case "original":
+                            // url = url.replace(regex, "img-original");
+                            // url = url.replace(regex_original, "");
+                            url = url.replace(regex, "img-master");
+                            break;
                     }
         
                     url = url.replace(regex2, "master");
