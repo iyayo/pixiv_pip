@@ -1,0 +1,25 @@
+body {
+    width: 480px;
+}
+
+h2 {
+    font-size: large;
+    color: #0096fa;
+}
+
+.frame {
+    border: 1px solid #e0e4e8;
+    border-radius: 8px;
+    margin: 8px;
+    padding: 16px;
+}
+
+.option {
+    border-top: 1px solid #e0e4e8;
+    padding: 20px 0;
+    font-size: 14px;
+}
+
+#switch_interval, #ugoira_interval {
+    width: 50px;
+}
