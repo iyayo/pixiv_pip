@@ -20,6 +20,14 @@ function restore(){
             document.getElementById("switch_interval").value = "2";
         }
 
+        if(storage.setting.ugoira_source != undefined) {
+            document.querySelectorAll("#ugoira_source > option").forEach(element => {
+                if (element.value == storage.setting.ugoira_source){
+                    element.selected = true;
+                }
+            });
+        }
+
         if(storage.setting.ugoira_loop != undefined) {
             document.getElementById("ugoira_loop").checked = storage.setting.ugoira_loop;
         } else {
@@ -52,24 +60,18 @@ function save() {
         "auto_switch": document.getElementById("auto_switch").checked,
         "switch_interval": document.getElementById("switch_interval").value,
         "custom_button": document.getElementById("custom_button").checked,
+        "ugoira_source": document.getElementById("ugoira_source").value,
         "ugoira_loop": document.getElementById("ugoira_loop").checked,
         "ugoira_interval": document.getElementById("ugoira_interval").value,
         "button_allocation": document.getElementById("button_allocation").value
     }
 
-    chrome.storage.local.set({"setting": setting}, function () {
-        var status = document.getElementById("status");
-        function hide_status(){
-            status.style.opacity = 0;
-        }
-
-        status.style.opacity = 1;
-        timeoutID = window.setTimeout(hide_status, 2000);
-    });
+    chrome.storage.local.set({"setting": setting}, function () {});
 }
 
 restore();
 
-document.getElementById("save").addEventListener("click", function () {
-    save();
+document.querySelectorAll("select, input").forEach(element => {
+    element.addEventListener("change", save);
 });
+

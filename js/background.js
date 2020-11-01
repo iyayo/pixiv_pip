@@ -4,6 +4,7 @@ let setting = {
     "hide_cursor": false,
     "auto_switch": true,
     "switch_interval": "2",
+    "ugoira_source": "600x600",
     "ugoira_interval": "60",
     "ugoira_loop": true,
     "custom_button": false,

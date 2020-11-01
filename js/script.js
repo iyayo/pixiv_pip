@@ -29,6 +29,7 @@ let setting = {
     "hide_cursor": false,
     "auto_switch": true,
     "switch_interval": "2",
+    "ugoira_source": "600x600",
     "ugoira_interval": "60",
     "ugoira_loop": true,
     "custom_button": false,
@@ -73,7 +74,16 @@ window.onload = function () {
                 if (ugoira_regex.test(event.target.alt) || ugoira_regex2.test(event.target.offsetParent.className)) {
                     prevSrc = event.target.src;
                     url = url.replace(regex, "img-zip-ugoira");
-                    url = url.replace(/(square1200.jpg|custom1200.jpg|master1200.jpg)/, "ugoira600x600.zip");
+
+                    switch(setting.ugoira_source){
+                        case "600x600":
+                            url = url.replace(/(square1200.jpg|custom1200.jpg|master1200.jpg)/, "ugoira600x600.zip");
+                            break;
+
+                        case "1920x1080":
+                            url = url.replace(/(square1200.jpg|custom1200.jpg|master1200.jpg)/, "ugoira1920x1080.zip");
+                            break;
+                    }
         
                     Zip.inflate_file(url, function (zip) {
                         let urlList = [];
