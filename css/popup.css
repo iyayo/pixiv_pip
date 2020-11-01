@@ -3,6 +3,39 @@ body {
     height: 380px;
 }
 
+header {
+    border-bottom: 1px solid #e0e4e8;
+}
+
+summary {
+    display: block;
+    margin: 5px 0;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #fd9e16;
+}
+
+body > details > summary::after {
+    content: " - クリックして表示";
+}
+
+body > details[open] > summary::after {
+    content: " - クリックして閉じる";
+}
+
+.details_content {
+    border-bottom: 1px solid #e0e4e8;
+}
+
+.update_title {
+    display: block;
+    margin-bottom: 10px;
+}
+
+.update_title::before {
+    content: "■";
+}
+
 #left-contents {
     float: left;
 }
@@ -10,10 +43,6 @@ body {
 #right-contents {
     float: right;
     text-align: center;
-}
-
-#updated_content {
-    color: #fd9e16;
 }
 
 #pip_button {
@@ -25,6 +54,7 @@ body {
     color: #ffffff;
     font-size: large;
     background-color: #0096fa;
+    transition: 0.3s;
 }
 
 #pip_button:hover {
