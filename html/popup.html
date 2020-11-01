@@ -1,78 +1,90 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="/css/popup.css">
     <title>pixiv PiP</title>
 </head>
+
 <body>
     <header>
         <h2>pixiv PiP</h2>
-        <hr>
     </header>
 
     <details>
-        <summary id="updated_content"><b>2020/10/19 - ver 2.1の更新内容 - クリックして表示</b></summary>
-        ■<strong>うごイラの再生に対応しました</strong>
-        <ul>
-            <li>オプションから以下の変更が可能です。
+        <summary>2020/11/01 - ver 2.2の更新内容</summary>
+        <div class="details_content">
+            <span class="update_title">オプションのUIを変更しました。</span>
+            <span class="update_title">オプション【うごいらのソース】を追加しました。</span>
+            <span class="update_title">イラスト保存の際、ファイル名にイラストIDを設定するようにしました。</span>
+            <span class="update_title">うごいらが再生可能になるまで、サムネイルを表示するようにしました。</span>
+        </div>
+
+        <details>
+            <summary>2020/10/19 - ver 2.1の更新内容</summary>
+            <div class="details_content">
+                <span class="update_title">うごイラの再生に対応しました</span>
                 <ul>
-                    <li>うごイラの切り替え間隔</li>
-                    <li>リピート再生</li>
+                    <li>オプションから以下の変更が可能です。
+                        <ul>
+                            <li>うごイラの切り替え間隔</li>
+                            <li>リピート再生</li>
+                        </ul>
+                    </li>
                 </ul>
-            </li>
-        </ul>
 
-        ■カスタムボタンの無効化が反映されない問題を修正しました。
+                <span class="update_title">カスタムボタンの無効化が反映されない問題を修正しました。</span>
+            </div>
+        </details>
 
-        <hr>
+        <details>
+            <summary>2020/10/10 - ver 2.0.1の更新内容</summary>
+            <div class="details_content">
+                <span class="update_title">PiPにコントローラーが表示されない問題を修正しました。</span>
 
-        <p><b id="updated_content">2020/10/10 - ver 2.0.1の更新内容</b></p>
-        <p>■PiPにコントローラーが表示されない問題を修正しました。</p>
+                <span class="update_title">カスタムボタン（広告スキップ）を追加しました。</span>
+                <ul>
+                    <li>オプションから機能を有効にすると、PiPウインドウに広告スキップボタンが追加されます。<br><br>
+                        以下のいずれかの機能を割り当てられます。
+                        <ol>
+                            <li>イラストの自動切り替えを開始/停止</li>
+                            <li>イラストを保存</li>
+                        </ol>
+                    </li>
+                </ul>
+            </div>
+        </details>
 
-        <p>■カスタムボタン（広告スキップ）を追加しました。
-            <ul>
-                <li>オプションから機能を有効にすると、PiPウインドウに広告スキップボタンが追加されます。<br><br>
-                    以下のいずれかの機能を割り当てられます。
-                    <ol>
-                        <li>イラストの自動切り替えを開始/停止</li>
-                        <li>イラストを保存</li>
-                    </ol>
-                </li>
-            </ul>
-            <hr>
-        </p>
+        <details>
+            <summary>2020/10/09 - ver 2.0の更新内容</summary>
+            <div class="details_content">
+                <span class="update_title">PiP（Picture-in-Picture）を使用してイラストを表示するように変更しました。</span>
+                <ul>
+                    <li>編集画面下部の<strong>【Picture-in-Picture】</strong>を押すとPiPウインドウが表示されます。<br>
+                        この状態でイラストのサムネイルにカーソルを合わせると、イラストがPiPウインドウに表示されます。</li>
+                </ul>
 
-        <p><b id="updated_content">2020/10/09 - ver 2.0の更新内容</b><br>
-            ■<strong>PiP（Picture-in-Picture）を使用してイラストを表示するように変更しました。</strong>
-            <ul>
-                <li>編集画面下部の<strong>【Picture-in-Picture】</strong>を押すとPiPウインドウが表示されます。<br>
-                    この状態でイラストのサムネイルにカーソルを合わせると、イラストがPiPウインドウに表示されます。</li>
-            </ul>
+                <ul>
+                    <li>イラストが複数枚ある場合は、PiPにコントローラーが表示されます。
+                        <ul>
+                            <li>前のトラック/次のトラック ＝ 前のイラスト/次のイラスト</li>
+                            <li>一時停止 ＝ イラストの自動切り替えを開始/停止</li>
+                            ※最新のChromeでは不具合により、一時停止ボタンが機能しません。こちらの機能を使用したい場合は、<strong>ver
+                                2.0.1</strong>で追加された<strong>カスタムボタン</strong>をご使用ください。
+                        </ul>
+                    </li>
+                </ul>
 
-            <ul>
-                <li>イラストが複数枚ある場合は、PiPにコントローラーが表示されます。
-                    <ul>
-                        <li>前のトラック/次のトラック ＝ 前のイラスト/次のイラスト</li>
-                        <li>一時停止 ＝ イラストの自動切り替えを開始/停止</li>
-                        ※最新のChromeでは不具合により、一時停止ボタンが機能しません。こちらの機能を使用したい場合は、<strong>ver 2.0.1</strong>で追加された<strong>カスタムボタン</strong>をご使用ください。
-                    </ul>
-                </li>
-            </ul>
-        </p>
-        
-        <p>
-            ■イラストの自動切り替え機能をデフォルトで有効にしました。
-        </p>
-        
-        <p>
-            ■今回の仕様変更に伴い、以下の機能を削除しました。
-            <ul>
-                <li>ポップアップ中のカーソル非表示</li>
-                <li>ツールバーから拡張機能のON/OFF切り替え</li>
-            </ul>
-        </p>
-        <hr>
+                <span class="update_title">イラストの自動切り替え機能をデフォルトで有効にしました。</span>
+
+                <span class="update_title">今回の仕様変更に伴い、以下の機能を削除しました。</span>
+                <ul>
+                    <li>ポップアップ中のカーソル非表示</li>
+                    <li>ツールバーから拡張機能のON/OFF切り替え</li>
+                </ul>
+            </div>
+        </details>
     </details>
 
     <div id="left-contents">
@@ -81,7 +93,7 @@
         <p id="status">0px, 100%, 100%, 100%</p>
         <input type="button" id="reset" value="リセット">
     </div>
-    
+
     <div id="right-contents">
         <h4>ぼかし</h4>
         0<input type="range" id="blur" min="0" max="10" value="0" list="blur-list">10
@@ -91,7 +103,7 @@
         0<input type="range" id="contrast" min="0" max="200" value="100" list="range-list">200
         <h4>彩度</h4>
         0<input type="range" id="saturate" min="0" max="200" value="100" list="range-list">200
-        
+
         <datalist id="blur-list">
             <option value="0">
             <option value="1">
@@ -105,7 +117,7 @@
             <option value="9">
             <option value="10">
         </datalist>
-    
+
         <datalist id="range-list">
             <option value="0">
             <option value="50">
@@ -121,4 +133,5 @@
 
     <script src="/js/popup.js"></script>
 </body>
+
 </html>
