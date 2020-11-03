@@ -90,7 +90,7 @@ window.onload = function () {
                             url = url.replace(ugoira_regex3, "ugoira1920x1080.zip");
                             break;
                     }
-                    
+
                     xhr.abort();
                     xhr.open("GET", url);
                     xhr.responseType = "arraybuffer";
@@ -111,6 +111,10 @@ window.onload = function () {
                         }
 
                         sendMsg(urlList);
+                    }
+
+                    xhr.onprogress = function(event){
+                        sendMsg([{type: "ugoira_progress", value: event.loaded / event.total}]);
                     }
 
                     xhr.send();
