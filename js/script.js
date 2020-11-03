@@ -67,6 +67,7 @@ window.onload = function () {
     const ugoira_regex3 = /(square1200.jpg|custom1200.jpg|master1200.jpg)/;
     const illustId_regex = /.*\/(\d+)_/;
     let prevSrc;
+    let xhr = new XMLHttpRequest();
 
     document.addEventListener("mouseover", function (event) {
         let url;
@@ -90,7 +91,11 @@ window.onload = function () {
                             break;
                     }
 
-                    Zip.inflate_file(url, function (zip) {
+                    xhr.open("GET", url);
+                    xhr.responseType = "arraybuffer";
+
+                    xhr.onload = function(){
+                        let zip = Zip.inflate(new Uint8Array(xhr.response));
                         let urlList = [];
                         let i = 1;
                         let illustId = url.match(illustId_regex)[1];
@@ -98,14 +103,16 @@ window.onload = function () {
                             "type": "ugoira",
                             "id": illustId
                         };
-        
+
                         for (let key in zip.files) {
                             urlList[i] = "data:image/jpeg;base64," + _arrayBufferToBase64(zip.files[key].inflate());
                             i++;
                         }
-        
+
                         sendMsg(urlList);
-                    });
+                    }
+
+                    xhr.send();
         
                     function _arrayBufferToBase64(buffer) {
                         let binary = '';
