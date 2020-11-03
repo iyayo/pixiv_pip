@@ -90,7 +90,8 @@ window.onload = function () {
                             url = url.replace(ugoira_regex3, "ugoira1920x1080.zip");
                             break;
                     }
-
+                    
+                    xhr.abort();
                     xhr.open("GET", url);
                     xhr.responseType = "arraybuffer";
 
