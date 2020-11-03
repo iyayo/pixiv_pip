@@ -115,6 +115,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         } else {
             document.exitPictureInPicture();
         }
+    } else if (request.message[0].type == "ugoira_progress"){
+        drawUgoiraProgress(request.message[0].value);
     } else {
         illustList = request.message;
         switchPause(interval);
@@ -247,6 +249,11 @@ function drawImg(x, y) {
         y = 0;
     }
     ctx.drawImage(img, x, y, img.width, img.height);
+}
+
+function drawUgoiraProgress(value) {
+    ctx.fillStyle = "#0096fa";
+    ctx.fillRect(0, canvas.height - canvas.height / 50, canvas.width * value, canvas.height / 50);
 }
 
 function setFilter() {
