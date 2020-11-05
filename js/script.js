@@ -128,6 +128,7 @@ window.onload = function () {
                     }
         
                 } else if (regex.test(url)) {
+                    xhr.abort();
                     prevSrc = event.target.src;
 
                     url = convertUrl(url);
