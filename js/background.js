@@ -1,22 +1,22 @@
 let setting = {
-    "image_source": "default",
-    "image_longside": "480",
-    "hide_cursor": false,
-    "auto_switch": true,
-    "switch_interval": "2",
-    "ugoira_source": "600x600",
-    "ugoira_interval": "60",
-    "ugoira_loop": true,
-    "custom_button": false,
-    "button_allocation": "play_pause"
+    image_source: "default",
+    image_longside: "480",
+    hide_cursor: false,
+    auto_switch: true,
+    switch_interval: "2",
+    ugoira_source: "600x600",
+    ugoira_interval: "60",
+    ugoira_loop: true,
+    custom_button: false,
+    button_allocation: "play_pause"
 }
 
 let filter_list = {
-    "edit": false,
-    "blur": 0,
-    "brightness": 100,
-    "contrast": 100,
-    "saturate": 100
+    edit: false,
+    blur: 0,
+    brightness: 100,
+    contrast: 100,
+    saturate: 100
 }
 
 chrome.storage.local.get(["setting", "filter_list"], (storage) => {
@@ -356,8 +356,8 @@ function reverseImage(dir) {
 // refererの書き換え
 function rewriteRequestHeader(details) {
     var Referer = {
-        "name": "Referer",
-        "value": "https://www.pixiv.net/"
+        name: "Referer",
+        value: "https://www.pixiv.net/"
     }
 
     details.requestHeaders.push(Referer);

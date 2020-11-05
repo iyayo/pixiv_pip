@@ -24,16 +24,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 let setting = {
-    "image_source": "default",
-    "image_longside": "480",
-    "hide_cursor": false,
-    "auto_switch": true,
-    "switch_interval": "2",
-    "ugoira_source": "600x600",
-    "ugoira_interval": "60",
-    "ugoira_loop": true,
-    "custom_button": false,
-    "button_allocation": "play_pause"
+    image_source: "default",
+    image_longside: "480",
+    hide_cursor: false,
+    auto_switch: true,
+    switch_interval: "2",
+    ugoira_source: "600x600",
+    ugoira_interval: "60",
+    ugoira_loop: true,
+    custom_button: false,
+    button_allocation: "play_pause"
 }
 
 chrome.storage.local.get(["setting"], (storage) => {

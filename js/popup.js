@@ -1,9 +1,9 @@
 let filter_list = {
-    "edit": false,
-    "blur": 0,
-    "brightness": 100,
-    "contrast": 100,
-    "saturate": 100
+    edit: false,
+    blur: 0,
+    brightness: 100,
+    contrast: 100,
+    saturate: 100
 }
 
 window.onload = function () {
@@ -47,11 +47,11 @@ window.onload = function () {
 
     function reset() {
         filter_list = {
-            "edit": edit.checked,
-            "blur": 0,
-            "brightness": 100,
-            "contrast": 100,
-            "saturate": 100
+            edit: edit.checked,
+            blur: 0,
+            brightness: 100,
+            contrast: 100,
+            saturate: 100
         }
 
         range.forEach(element => {

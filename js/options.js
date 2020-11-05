@@ -56,14 +56,14 @@ function restore(){
 
 function save() {
     let setting = {
-        "image_source": document.getElementById("image_source").value,
-        "auto_switch": document.getElementById("auto_switch").checked,
-        "switch_interval": document.getElementById("switch_interval").value,
-        "custom_button": document.getElementById("custom_button").checked,
-        "ugoira_source": document.getElementById("ugoira_source").value,
-        "ugoira_loop": document.getElementById("ugoira_loop").checked,
-        "ugoira_interval": document.getElementById("ugoira_interval").value,
-        "button_allocation": document.getElementById("button_allocation").value
+        image_source: document.getElementById("image_source").value,
+        auto_switch: document.getElementById("auto_switch").checked,
+        switch_interval: document.getElementById("switch_interval").value,
+        custom_button: document.getElementById("custom_button").checked,
+        ugoira_source: document.getElementById("ugoira_source").value,
+        ugoira_loop: document.getElementById("ugoira_loop").checked,
+        ugoira_interval: document.getElementById("ugoira_interval").value,
+        button_allocation: document.getElementById("button_allocation").value
     }
 
     chrome.storage.local.set({"setting": setting}, function () {});
