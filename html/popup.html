@@ -87,47 +87,47 @@
         </details>
     </details>
 
-    <div id="left-contents">
-        <h3><input type="checkbox" id="edit">フィルター</h3>
-        <img src="/icon/icon128.png" id="sample_image">
-        <p id="status">0px, 100%, 100%, 100%</p>
-        <input type="button" id="reset" value="リセット">
+    <div class="filter_edit">
+        <div id="filter_preview">
+            <h3>フィルター<input type="checkbox" id="edit"><label for="edit"><div></div></label></h3>
+            <img src="/icon/icon128.png" id="sample_image">
+            <p id="status">0px, 100%, 100%, 100%</p>
+            <input type="button" id="reset" value="リセット">
+        </div>
+
+        <div id="filter_list">
+            <h4>ぼかし</h4>
+            0<input type="range" id="blur" min="0" max="10" value="0" list="blur-list">10
+            <h4>明るさ</h4>
+            0<input type="range" id="brightness" min="0" max="200" value="100" list="range-list">200
+            <h4>コントラスト</h4>
+            0<input type="range" id="contrast" min="0" max="200" value="100" list="range-list">200
+            <h4>彩度</h4>
+            0<input type="range" id="saturate" min="0" max="200" value="100" list="range-list">200
+
+            <datalist id="blur-list">
+                <option value="0">
+                <option value="1">
+                <option value="2">
+                <option value="3">
+                <option value="4">
+                <option value="5">
+                <option value="6">
+                <option value="7">
+                <option value="8">
+                <option value="9">
+                <option value="10">
+            </datalist>
+
+            <datalist id="range-list">
+                <option value="0">
+                <option value="50">
+                <option value="100">
+                <option value="150">
+                <option value="200">
+            </datalist>
+        </div>
     </div>
-
-    <div id="right-contents">
-        <h4>ぼかし</h4>
-        0<input type="range" id="blur" min="0" max="10" value="0" list="blur-list">10
-        <h4>明るさ</h4>
-        0<input type="range" id="brightness" min="0" max="200" value="100" list="range-list">200
-        <h4>コントラスト</h4>
-        0<input type="range" id="contrast" min="0" max="200" value="100" list="range-list">200
-        <h4>彩度</h4>
-        0<input type="range" id="saturate" min="0" max="200" value="100" list="range-list">200
-
-        <datalist id="blur-list">
-            <option value="0">
-            <option value="1">
-            <option value="2">
-            <option value="3">
-            <option value="4">
-            <option value="5">
-            <option value="6">
-            <option value="7">
-            <option value="8">
-            <option value="9">
-            <option value="10">
-        </datalist>
-
-        <datalist id="range-list">
-            <option value="0">
-            <option value="50">
-            <option value="100">
-            <option value="150">
-            <option value="200">
-        </datalist>
-    </div>
-
-    <div style="clear: both;"></div>
 
     <button id="pip_button">Picture-in-Picture</button>
 
