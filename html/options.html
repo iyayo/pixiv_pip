@@ -11,23 +11,29 @@
         <h2>イラスト</h2>
 
         <div class="option">
-            ソース（初期値：480x960）：
-            <select id="image_source">
-                <option value="360x360">360x360</option>
-                <option value="600x600">600x600</option>
-                <option value="default" selected>480x960</option>
-                <option value="600x1200">600x1200(WebP)</option>
-                <option value="master">1200x1200</option>
-                <option value="original">original</option>
-            </select>
+            <div class="option_name">ソース（初期値：480x960）</div>
+            <div class="option_value">
+                <select id="image_source">
+                    <option value="360x360">360x360</option>
+                    <option value="600x600">600x600</option>
+                    <option value="default" selected>480x960</option>
+                    <option value="600x1200">600x1200(WebP)</option>
+                    <option value="master">1200x1200</option>
+                    <option value="original">original</option>
+                </select>
+            </div>
         </div>
 
         <div class="option">
-            切り替え間隔（初期値：2）：<input type="number" id="switch_interval" value="2" step="0.1">（秒）
+            <div class="option_name">切り替え間隔（初期値：2）</div>
+            <div class="option_value"><input type="number" id="switch_interval" value="2" step="0.1">（秒）</div>
         </div>
 
         <div class="option">
-            自動切り替え<input type="checkbox" id="auto_switch" checked>
+            <div class="option_name">自動切り替え</div>
+            <div class="option_value">
+                <input type="checkbox" id="auto_switch" checked><label for="auto_switch"><div></div></label>
+            </div>
         </div>
     </div>
 
@@ -35,19 +41,27 @@
         <h2>うごいら</h2>
 
         <div class="option">
-            ソース（初期値：600x600）：
-            <select id="ugoira_source">
-                <option value="600x600" selected>600x600</option>
-                <option value="1920x1080">1920x1080</option>
-            </select>
+            <div class="option_name">ソース（初期値：600x600）</div>
+            <div class="option_value">
+                <select id="ugoira_source">
+                    <option value="600x600" selected>600x600</option>
+                    <option value="1920x1080">1920x1080</option>
+                </select>
+            </div>
         </div>
 
         <div class="option">
-            切り替え間隔（初期値：60）：<input type="number" id="ugoira_interval" value="60" step="1">（ミリ秒）
+            <div class="option_name">切り替え間隔（初期値：60）</div>
+            <div class="option_value">
+                <input type="number" id="ugoira_interval" value="60" step="1">（ミリ秒）
+            </div>
         </div>
 
         <div class="option">
-            リピート再生<input type="checkbox" id="ugoira_loop" checked>
+            <div class="option_name">リピート再生</div>
+            <div class="option_value">
+                <input type="checkbox" id="ugoira_loop" checked><label for="ugoira_loop"><div></div></label>
+            </div>
         </div>
     </div>
         
@@ -55,15 +69,22 @@
         <h2>その他</h2>
         
         <div class="option">
-            カスタムボタン（広告スキップ）の使用<input type="checkbox" id="custom_button">
+            <div class="option_name">カスタムボタン（広告スキップ）の使用</div>
+            <div class="option_value">
+                <input type="checkbox" id="custom_button"><label for="custom_button"><div></div></label>
+                <div>有効にすると、Picture-in-Pictureウインドウに広告スキップボタンが追加されます。</div>
+            </div>
         </div>
 
         <div class="option">
-            カスタムボタンの割り当て：
-            <select id="button_allocation">
+            <div class="option_name">カスタムボタンの割り当て</div>
+            <div class="option_value">
+                <select id="button_allocation">
                 <option value="play_pause" selected>イラストの自動切り替えを開始/停止</option>
                 <option value="save">イラストを保存</option>
-            </select>
+                </select>
+            </div>
+            
         </div>
     </div>
 

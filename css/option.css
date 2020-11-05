@@ -1,10 +1,48 @@
 body {
-    width: 480px;
+    width: 600px;
 }
 
 h2 {
     font-size: large;
     color: #0096fa;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + label {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 24px;
+    top: 7px;
+    box-sizing: border-box;
+    border: 1px solid #e0e4e8;
+    border-radius: 12px;
+    cursor: pointer;
+    background-color: #767194;
+}
+
+input[type="checkbox"]:checked + label {
+    background-color: #0096fa;
+}
+
+input[type="checkbox"] + label > div {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 1px;
+    left: 1px;
+    box-sizing: border-box;
+    border: 1px solid #e0e4e8;
+    border-radius: 50%;
+    background-color: #ffffff;
+    transition: 0.2s;
+}
+
+input[type="checkbox"]:checked + label > div {
+    transform: translateX(17px);
 }
 
 .frame {
@@ -15,9 +53,27 @@ h2 {
 }
 
 .option {
+    display: flex;
+    align-items: baseline;
     border-top: 1px solid #e0e4e8;
     padding: 20px 0;
     font-size: 14px;
+}
+
+.option_name {
+    width: 260px;
+    margin-right: 40px;
+    color: #3b3b3b;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.option_value {
+    width: 300px;
+}
+
+.option_value::before {
+    content: "：";
 }
 
 #switch_interval, #ugoira_interval {
