@@ -36,24 +36,10 @@ let setting = {
     "button_allocation": "play_pause"
 }
 
-let filter_list = {
-    "edit": false,
-    "blur": 0,
-    "brightness": 100,
-    "contrast": 100,
-    "saturate": 100
-}
-
-chrome.storage.local.get(["setting", "filter_list"], (storage) => {
+chrome.storage.local.get(["setting"], (storage) => {
     for (let key in storage.setting){
         if (storage.setting[key] !== undefined){
             setting[key] = storage.setting[key];
-        }
-    }
-
-    for (let key in storage.filter_list){
-        if (storage.filter_list[key] !== undefined){
-            filter_list[key] = storage.filter_list[key];
         }
     }
 });
