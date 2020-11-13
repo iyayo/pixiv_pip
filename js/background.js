@@ -130,35 +130,40 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                 startInterval(illustList[0].type);
             }
 
+
             // カスタムボタン（skipad）
-            if (setting.custom_button) {
-                navigator.mediaSession.setActionHandler('skipad', function () {
-                    switch (setting.button_allocation) {
-                        case "play_pause":
-                            if (interval) {
-                                switchPause(interval);
-                            } else {
-                                if (illustNum < illustLength) {
-                                    startInterval(illustList[0].type);
-                                } else if (illustNum == illustLength) {
-                                    illustNum = 1;
-                                    img.src = illustList[illustNum];
-                                    startInterval(illustList[0].type);
+            try {
+                if (setting.custom_button) {
+                    navigator.mediaSession.setActionHandler('skipad', function () {
+                        switch (setting.button_allocation) {
+                            case "play_pause":
+                                if (interval) {
+                                    switchPause(interval);
+                                } else {
+                                    if (illustNum < illustLength) {
+                                        startInterval(illustList[0].type);
+                                    } else if (illustNum == illustLength) {
+                                        illustNum = 1;
+                                        img.src = illustList[illustNum];
+                                        startInterval(illustList[0].type);
+                                    }
                                 }
-                            }
-                            break;
-                    
-                        case "save":
-                            var a = document.createElement("a");
-                            a.href = canvas.toDataURL("image/jpeg");
-                            a.download =  `${illustList[0].id}_p${illustNum - 1}.jpg`
-                            a.click();
-                            break;
-                    }
-                });
-            } else {
-                navigator.mediaSession.setActionHandler('skipad', null);
-            }
+                                break;
+                        
+                            case "save":
+                                var a = document.createElement("a");
+                                a.href = canvas.toDataURL("image/jpeg");
+                                a.download =  `${illustList[0].id}_p${illustNum - 1}.jpg`
+                                a.click();
+                                break;
+                        }
+                    });
+                } else {
+                    navigator.mediaSession.setActionHandler('skipad', null);
+                }
+            } catch (error) {
+                console.log(error);
+            }            
 
             if (illustLength > 1) {
                 // 画像切り替えの再開 & 中断
