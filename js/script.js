@@ -48,6 +48,7 @@ window.onload = function () {
     const regex = /c\/.*\/(img-master|custom-thumb)/;
     const regex2 = /(square|custom)/;
     const regex_original = /_(square|custom|master)\d+/;
+    const backImage_regex = /url\("(.*)"\)/;
     const ugoira_regex = /.*うごイラ$/;
     const ugoira_regex2 = /ugoku-illust/;
     const ugoira_regex3 = /(square1200.jpg|custom1200.jpg|master1200.jpg)/;
@@ -57,25 +58,15 @@ window.onload = function () {
 
     document.addEventListener("mouseover", function (event) {
         let url;
-        if (event.target.tagName == "IMG") {
-            if (prevSrc != event.target.src){
-                url = event.target.src;
-                if (ugoira_regex.test(event.target.alt) || ugoira_regex2.test(event.target.offsetParent.className)) {
-                    prevSrc = event.target.src;
+        if (event.target.style.backgroundImage){
+            xhr.abort();
+            url = event.target.style.backgroundImage.match(backImage_regex)[1];
+            if (prevSrc != url){
+                prevSrc = url;
+                if (event.target.nextElementSibling) {
+                    sendMsg([{"type": "illust", "id": url.match(illustId_regex)[1]}, convertUrl("illust", url)]);
 
-                    sendMsg([{"type": "illust", "id": url.match(illustId_regex)[1]}, convertUrl(url)]);
-
-                    url = url.replace(regex, "img-zip-ugoira");
-
-                    switch(setting.ugoira_source){
-                        case "600x600":
-                            url = url.replace(ugoira_regex3, "ugoira600x600.zip");
-                            break;
-
-                        case "1920x1080":
-                            url = url.replace(ugoira_regex3, "ugoira1920x1080.zip");
-                            break;
-                    }
+                    url = convertUrl("ugoira", url);
 
                     xhr.abort();
                     xhr.open("GET", url);
@@ -104,74 +95,135 @@ window.onload = function () {
                     }
 
                     xhr.send();
-        
-                    function _arrayBufferToBase64(buffer) {
-                        let binary = '';
-                        for (let j = 0; j < buffer.byteLength; j++) {
-                            binary += String.fromCharCode(buffer[j]);
+                } else if (regex.test(url)) {
+                    xhr.abort();
+                    sendMsg(createUrlList("illust", convertUrl("illust", url), event.target));
+                }
+            }
+        } else if (event.target.tagName == "IMG") {
+            if (prevSrc != event.target.src){
+                url = event.target.src;
+                if (ugoira_regex.test(event.target.alt) || ugoira_regex2.test(event.target.offsetParent.className)) {
+                    prevSrc = event.target.src;
+
+                    sendMsg([{"type": "illust", "id": url.match(illustId_regex)[1]}, convertUrl("illust", url)]);
+
+                    url = convertUrl("ugoira", url);
+
+                    xhr.abort();
+                    xhr.open("GET", url);
+                    xhr.responseType = "arraybuffer";
+
+                    xhr.onload = function(){
+                        let zip = Zip.inflate(new Uint8Array(xhr.response));
+                        let urlList = [];
+                        let i = 1;
+                        let illustId = url.match(illustId_regex)[1];
+                        urlList[0] = {
+                            "type": "ugoira",
+                            "id": illustId
+                        };
+
+                        for (let key in zip.files) {
+                            urlList[i] = "data:image/jpeg;base64," + _arrayBufferToBase64(zip.files[key].inflate());
+                            i++;
                         }
-                        return window.btoa(binary);
+
+                        sendMsg(urlList);
                     }
-        
+
+                    xhr.onprogress = function(event){
+                        sendMsg([{type: "ugoira_progress", value: event.loaded / event.total}]);
+                    }
+
+                    xhr.send();
                 } else if (regex.test(url)) {
                     xhr.abort();
                     prevSrc = event.target.src;
-
-                    url = convertUrl(url);
-
-                    let illustId = url.match(illustId_regex)[1];
-                    let illustNum = event.target.parentNode.parentNode.querySelector("span:not([class])");
-                    let urlList = [];
-                    urlList[0] = { 
-                        "type": "illust",
-                        "id": illustId
-                    };
-        
-                    if (illustNum) {
-                        for (let i = 1; i <= illustNum.innerText; i++) {
-                            urlList[i] = url.replace("p0", `p${i - 1}`);
-                        }
-                    } else {
-                        urlList[1] = url;
-                    }
-        
-                    sendMsg(urlList);
+                    sendMsg(createUrlList("illust", convertUrl("illust", url), event.target));
                 }
             }
         }
     });
 
-    function convertUrl(url){
-        switch (setting.image_source) {
-            case "default":
-                url = url.replace(regex, "c/480x960/img-master");
-                break;
+    function _arrayBufferToBase64(buffer) {
+        let binary = '';
+        for (let j = 0; j < buffer.byteLength; j++) {
+            binary += String.fromCharCode(buffer[j]);
+        }
+        return window.btoa(binary);
+    }
 
-            case "360x360":
-                url = url.replace(regex, "c/360x360_70/img-master");
-                break;
-            
-            case "600x600":
-                url = url.replace(regex, "c/600x600/img-master");
-                break;
-            
-            case "600x1200":
-                url = url.replace(regex, "c/600x1200_90_webp/img-master");
-                break;
-            
-            case "master":
-                url = url.replace(regex, "img-master");
-                break;
+    function createUrlList(type, url, element){
+        if (type == "illust"){
+            let illustId = url.match(illustId_regex)[1];
+            let illustNum = element.parentNode.parentNode.querySelector("span:not([class])");
+            let urlList = [];
+            urlList[0] = {
+                "type": "illust",
+                "id": illustId
+            };
 
-            case "original":
-                // url = url.replace(regex, "img-original");
-                // url = url.replace(regex_original, "");
-                url = url.replace(regex, "img-master");
+            if (illustNum) {
+                for (let i = 1; i <= illustNum.innerText; i++) {
+                    urlList[i] = url.replace("p0", `p${i - 1}`);
+                }
+            } else {
+                urlList[1] = url;
+            }
+
+            return urlList;
+        }
+    }
+
+    function convertUrl(type, url){
+        switch (type) {
+            case "illust":
+                switch (setting.image_source) {
+                    case "default":
+                        url = url.replace(regex, "c/480x960/img-master");
+                        break;
+        
+                    case "360x360":
+                        url = url.replace(regex, "c/360x360_70/img-master");
+                        break;
+                    
+                    case "600x600":
+                        url = url.replace(regex, "c/600x600/img-master");
+                        break;
+                    
+                    case "600x1200":
+                        url = url.replace(regex, "c/600x1200_90_webp/img-master");
+                        break;
+                    
+                    case "master":
+                        url = url.replace(regex, "img-master");
+                        break;
+        
+                    case "original":
+                        // url = url.replace(regex, "img-original");
+                        // url = url.replace(regex_original, "");
+                        url = url.replace(regex, "img-master");
+                        break;
+                }
+        
+                url = url.replace(regex2, "master");
+                break;
+        
+            case "ugoira":
+                url = url.replace(regex, "img-zip-ugoira");
+                switch(setting.ugoira_source){
+                    case "600x600":
+                        url = url.replace(ugoira_regex3, "ugoira600x600.zip");
+                        break;
+
+                    case "1920x1080":
+                        url = url.replace(ugoira_regex3, "ugoira1920x1080.zip");
+                        break;
+                }
                 break;
         }
-
-        url = url.replace(regex2, "master");
-
+        
         return url;
     }
 
