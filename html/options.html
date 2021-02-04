@@ -64,6 +64,70 @@
             </div>
         </div>
     </div>
+
+    <div class="frame">
+        <h2>イラスト&うごイラの枚数の表示設定</h2>
+
+        <div class="option">
+            <div class="option_name">イラストの枚数表示</div>
+            <div class="option_value">
+                <input type="checkbox" id="illust_number" checked><label for="illust_number"><div></div></label>
+            </div>
+        </div>
+
+        <div class="option">
+            <div class="option_name">うごイラの枚数表示</div>
+            <div class="option_value">
+                <input type="checkbox" id="ugoira_number"><label for="ugoira_number"><div></div></label>
+            </div>
+        </div>
+
+        <div class="option">
+            <div class="option_name">文字の表示位置（初期値：右上）</div>
+            <div class="option_value">
+                <select id="number_location">
+                    <option value="top_left">左上</option>
+                    <option value="top_right" selected>右上</option>
+                    <option value="bottom_left">左下</option>
+                    <option value="bottom_right">右下</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="option">
+            <div class="option_name">文字のフォント（初期値：monospace）</div>
+            <div class="option_value">
+                <select id="number_font">
+                    <option value="sans-serif">sans-serif</option>
+                    <option value="serif">serif</option>
+                    <option value="monospace" selected>monospace</option>
+                    <option value="fantasy">fantasy</option>
+                    <option value="cursive">cursive</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="option">
+            <div class="option_name">文字のサイズ（初期値：5）</div>
+            <div class="option_value">
+                <input type="number" id="number_size" value="5" step="0.1">（％）
+            </div>
+        </div>
+
+        <div class="option">
+            <div class="option_name">文字の色</div>
+            <div class="option_value">
+                <input type="color" id="number_text_color" value="#ffffff">
+            </div>
+        </div>
+
+        <div class="option">
+            <div class="option_name">縁取りの色</div>
+            <div class="option_value">
+                <input type="color" id="number_edge_color" value="#000000">
+            </div>
+        </div>
+    </div>
         
     <div class="frame">
         <h2>その他</h2>

@@ -30,6 +30,7 @@
   },
   "permissions": [
     "storage",
+    "fontSettings",
     "webRequest",
     "webRequestBlocking",
     "https://i.pximg.net/*"

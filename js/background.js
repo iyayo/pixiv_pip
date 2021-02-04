@@ -8,7 +8,14 @@ let setting = {
     ugoira_interval: "60",
     ugoira_loop: true,
     custom_button: false,
-    button_allocation: "play_pause"
+    button_allocation: "play_pause",
+    illust_number: true,
+    ugoira_number: false,
+    number_location: "top_right",
+    number_font: "monospace",
+    number_size: 5,
+    number_text_color: "#ffffff",
+    number_edge_color: "#000000"
 }
 
 let filter_list = {
@@ -71,24 +78,28 @@ chrome.commands.onCommand.addListener(function (command) {
             setFilter();
             reverseImage();
             drawImg(drawLocation.x, drawLocation.y);
+            drawIllustNumber(drawLocation.x, drawLocation.y);
             break;
         case "image_rotate_90_counterclockwise":
             drawLocation = rotationImage(-90);
             setFilter();
             reverseImage();
             drawImg(drawLocation.x, drawLocation.y);
+            drawIllustNumber(drawLocation.x, drawLocation.y);
             break;
         case "image_flip_horizontal":
             drawLocation = rotationImage(0);
             setFilter();
             reverseImage("horizontal");
             drawImg(drawLocation.x, drawLocation.y);
+            drawIllustNumber(drawLocation.x, drawLocation.y);
             break;
         case "image_flip_vertical":
             drawLocation = rotationImage(0);
             setFilter();
             reverseImage("vertical");
             drawImg(drawLocation.x, drawLocation.y);
+            drawIllustNumber(drawLocation.x, drawLocation.y);
             break;
     }
 });
@@ -226,6 +237,7 @@ function draw(clear, width, height) {
     setCanvas(width, height);
     setFilter();
     drawImg();
+    drawIllustNumber();
 }
 
 function clearCanvas(width, height) {
@@ -254,6 +266,56 @@ function drawImg(x, y) {
         y = 0;
     }
     ctx.drawImage(img, x, y, img.width, img.height);
+}
+
+function drawIllustNumber(x, y) {
+    if (illustList[0].type == "illust" && setting.illust_number == true || illustList[0].type == "ugoira" && setting.ugoira_number == true){
+        if (illustLength > 1) {
+            if (!x) {
+                x = 0;
+            }
+        
+            if (!y) {
+                y = 0;
+            }
+    
+            ctx.filter = "none";
+            ctx.font = `${(canvas.width + canvas.height) / 100 * setting.number_size}px ${setting.number_font}`;
+            ctx.fillStyle = setting.number_text_color;
+            ctx.strokeStyle = setting.number_edge_color;
+            ctx.lineWidth = "5";
+    
+            switch (setting.number_location) {
+                case "top_left":
+                    ctx.textAlign = "start";
+                    ctx.textBaseline = "top";
+                    ctx.strokeText(`${illustNum}/${illustLength}`, x, y);
+                    ctx.fillText(`${illustNum}/${illustLength}`, x, y);
+                    break;
+            
+                case "top_right":
+                    ctx.textAlign = "end";
+                    ctx.textBaseline = "top";
+                    ctx.strokeText(`${illustNum}/${illustLength}`, x + img.width, y);
+                    ctx.fillText(`${illustNum}/${illustLength}`, x + img.width, y); 
+                    break;
+    
+                case "bottom_left":
+                    ctx.textAlign = "start";
+                    ctx.textBaseline = "bottom";
+                    ctx.strokeText(`${illustNum}/${illustLength}`, x, y + img.height);
+                    ctx.fillText(`${illustNum}/${illustLength}`, x, y + img.height); 
+                    break;
+    
+                case "bottom_right":
+                    ctx.textAlign = "end";
+                    ctx.textBaseline = "bottom";
+                    ctx.strokeText(`${illustNum}/${illustLength}`, x + img.width, y + img.height);
+                    ctx.fillText(`${illustNum}/${illustLength}`, x + img.width, y + img.height); 
+                    break;
+            }    
+        }    
+    }
 }
 
 function drawUgoiraProgress(value) {
@@ -387,5 +449,6 @@ chrome.storage.local.onChanged.addListener(function (object) {
         setFilter();
         reverseImage();
         drawImg(drawLocation.x, drawLocation.y);
+        drawIllustNumber(drawLocation.x, drawLocation.y);
     }
 });
