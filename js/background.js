@@ -47,10 +47,6 @@ const video = document.createElement("video");
 video.muted = true;
 video.srcObject = canvas.captureStream();
 
-const audio = document.createElement("audio");
-audio.muted = audio.loop = true;
-audio.src = "/audio/silent.mp3";
-
 let interval;
 let illustNum;
 let illustLength;
@@ -120,7 +116,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
     if (request.message == "showPopupWindow") {
         video.play();
-        audio.play();
         if (video !== document.pictureInPictureElement) {
             video.requestPictureInPicture();
         } else {
