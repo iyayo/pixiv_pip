@@ -55,6 +55,7 @@ let illustAngle = 0;
 let drawLocation;
 let horizontal = 1;
 let vertical = 1;
+let save_canvas;
 
 let img = new Image();
 
@@ -158,7 +159,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         
                             case "save":
                                 var a = document.createElement("a");
-                                a.href = canvas.toDataURL("image/jpeg");
+                                a.href = save_canvas;
                                 a.download =  `${illustList[0].id}_p${illustNum - 1}.jpg`
                                 a.click();
                                 break;
@@ -261,6 +262,7 @@ function drawImg(x, y) {
         y = 0;
     }
     ctx.drawImage(img, x, y, img.width, img.height);
+    save_canvas = canvas.toDataURL("image/jpeg");
 }
 
 function drawIllustNumber(x, y) {
