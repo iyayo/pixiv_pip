@@ -137,10 +137,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             }
 
 
-            // カスタムボタン（skipad）
+            // カスタムボタン（togglemicrophone）
             try {
                 if (setting.custom_button) {
-                    navigator.mediaSession.setActionHandler('skipad', function () {
+                    navigator.mediaSession.setActionHandler('togglemicrophone', function () {
                         switch (setting.button_allocation) {
                             case "play_pause":
                                 if (interval) {
@@ -165,11 +165,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         }
                     });
                 } else {
-                    navigator.mediaSession.setActionHandler('skipad', null);
+                    navigator.mediaSession.setActionHandler('togglemicrophone', null);
                 }
             } catch (error) {
                 console.log(error);
-            }            
+            }   
 
             if (illustLength > 1) {
                 // 画像切り替えの再開 & 中断
