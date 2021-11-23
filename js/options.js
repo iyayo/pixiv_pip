@@ -34,12 +34,6 @@ function restore(){
             document.getElementById("ugoira_loop").checked = true;
         }
 
-        if(storage.setting.ugoira_interval != undefined) {
-            document.getElementById("ugoira_interval").value = storage.setting.ugoira_interval;
-        } else {
-            document.getElementById("ugoira_interval").value = "60";
-        }
-
         if(storage.setting.custom_button != undefined) {
             document.getElementById("custom_button").checked = storage.setting.custom_button;
         }
@@ -104,7 +98,6 @@ function save() {
         custom_button: document.getElementById("custom_button").checked,
         ugoira_source: document.getElementById("ugoira_source").value,
         ugoira_loop: document.getElementById("ugoira_loop").checked,
-        ugoira_interval: document.getElementById("ugoira_interval").value,
         button_allocation: document.getElementById("button_allocation").value,
         illust_number: document.getElementById("illust_number").checked,
         ugoira_number: document.getElementById("ugoira_number").checked,
