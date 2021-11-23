@@ -1,11 +1,10 @@
 let setting = {
-    image_source: "default",
+    image_source: "regular",
     image_longside: "480",
     hide_cursor: false,
     auto_switch: true,
     switch_interval: "2",
     ugoira_source: "600x600",
-    ugoira_interval: "60",
     ugoira_loop: true,
     custom_button: false,
     button_allocation: "play_pause",
@@ -25,6 +24,16 @@ let filter_list = {
     contrast: 100,
     saturate: 100
 }
+
+chrome.runtime.onInstalled.addListener(() => {
+    chrome.storage.local.get(["setting"], storage => {
+        if (storage.setting.image_source === "360x360" || storage.setting.image_source === "600x600") storage.setting.image_source = "small";
+        else if (storage.setting.image_source === "default" || storage.setting.image_source === "600x1200" || storage.setting.image_source === "master") storage.setting.image_source = "regular";
+        else return;
+
+        chrome.storage.local.set({"setting": storage.setting})
+    })
+});
 
 chrome.storage.local.get(["setting", "filter_list"], (storage) => {
     for (let key in storage.setting){
@@ -52,6 +61,7 @@ let illustNum;
 let illustLength;
 let illustList;
 let illustAngle = 0;
+let playUgoira = false;
 let drawLocation;
 let horizontal = 1;
 let vertical = 1;
@@ -103,26 +113,18 @@ chrome.commands.onCommand.addListener(function (command) {
 
 // Content Scriptと通信
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    function startInterval(type) {
-        switch (type) {
-            case "illust":
-                interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
-                break;
+    playUgoira = false;
 
-            case "ugoira":
-                interval = setInterval(switchImage, setting.ugoira_interval, illustList, illustLength);
-                break;
-        }
+    function startInterval(type) {
+        if (type === "illust") interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
+        else if (type === "ugoira") startUgoira(illustList, illustNum, illustLength);
     }
 
     if (request.message == "showPopupWindow") {
         video.play();
-        if (video !== document.pictureInPictureElement) {
-            video.requestPictureInPicture();
-        } else {
-            document.exitPictureInPicture();
-        }
-    } else if (request.message[0].type == "ugoira_progress"){
+        if (video !== document.pictureInPictureElement) video.requestPictureInPicture();
+        else document.exitPictureInPicture();
+    } else if (request.message[0].type == "ugoira_progress") {
         drawUgoiraProgress(request.message[0].value);
     } else {
         illustList = request.message;
@@ -133,10 +135,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (video == document.pictureInPictureElement) {
             img.src = illustList[illustNum];
 
-            if (setting.auto_switch && illustLength > 1 && illustNum < illustLength) {
-                startInterval(illustList[0].type);
-            }
-
+            if (setting.auto_switch && illustLength > 1 && illustNum < illustLength) startInterval(illustList[0].type);
 
             // カスタムボタン（togglemicrophone）
             try {
@@ -146,6 +145,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                             case "play_pause":
                                 if (interval) {
                                     switchPause(interval);
+                                } else if (playUgoira) {
+                                    playUgoira = false;
                                 } else {
                                     if (illustNum < illustLength) {
                                         startInterval(illustList[0].type);
@@ -178,29 +179,47 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                 navigator.mediaSession.setActionHandler('pause', function () {
                     if (interval) {
                         switchPause(interval);
+                    } else if (playUgoira) {
+                        playUgoira = false;
                     } else {
-                        if (illustNum < illustLength) {
-                            startInterval(illustList[0].type);
-                        } else if (illustNum == illustLength) {
-                            illustNum = 1;
-                            img.src = illustList[illustNum];
-                            startInterval(illustList[0].type);
+                        if (illustList[0].type === "illust"){
+                            if (illustNum < illustLength) {
+                                startInterval(illustList[0].type);
+                            } else if (illustNum == illustLength) {
+                                illustNum = 1;
+                                img.src = illustList[illustNum];
+                                startInterval(illustList[0].type);
+                            }
+                        } else if (illustList[0].type === "ugoira") {
+                            startUgoira(illustList, illustNum, illustLength);
                         }
                     }
                 });
                 // 前の画像 & 次の画像
                 navigator.mediaSession.setActionHandler('previoustrack', function () {
                     if (illustNum > 1) {
-                        switchPause(interval);
-                        illustNum = --illustNum;
-                        img.src = illustList[illustNum];
+                        if (illustList[0].type === "illust") {
+                            switchPause(interval);
+                            illustNum = --illustNum;
+                            img.src = illustList[illustNum];
+                        } else if (illustList[0].type === "ugoira") {
+                            playUgoira = false;
+                            illustNum = --illustNum;
+                            img.src = illustList[illustNum][0];
+                        }
                     }
                 });
                 navigator.mediaSession.setActionHandler('nexttrack', function () {
                     if (illustNum < illustLength) {
-                        switchPause(interval);
-                        illustNum = ++illustNum;
-                        img.src = illustList[illustNum];
+                        if (illustList[0].type === "illust") {
+                            switchPause(interval);
+                            illustNum = ++illustNum;
+                            img.src = illustList[illustNum];
+                        } else if (illustList[0].type === "ugoira") {
+                            playUgoira = false;
+                            illustNum = ++illustNum;
+                            img.src = illustList[illustNum][0];
+                        }
                     }
                 });
             } else {
@@ -331,23 +350,42 @@ function switchImage(url, max) {
         illustNum = ++illustNum;
         img.src = url[illustNum];
 
-        if (illustList[0].type == "illust" && illustNum == max) {
-            switchPause(interval);
-        } else if (illustList[0].type == "ugoira" && illustNum == max && setting.ugoira_loop) {
-            illustNum = 0;
-        }
+        if (illustList[0].type == "illust" && illustNum == max) switchPause(interval);
     } else {
-        if (illustList[0].type == "ugoira" && setting.ugoira_loop && illustNum == max) {
-            illustNum = 0;
-        } else {
-            switchPause(interval);
-        }
+        switchPause(interval);
     }
 }
 
 function switchPause() {
     clearInterval(interval);
     interval = false;
+}
+
+async function startUgoira(ugoiraList, num, length) {
+    illustNum = num;
+    illustLength = length;
+    playUgoira = true;
+
+    while (playUgoira == true) {
+        img.src = ugoiraList[num][0];
+
+        await sleep(ugoiraList[num][1]);
+
+        if (setting.ugoira_loop && num == ugoiraList.length - 1) num = 0;
+        else if (!setting.ugoira_loop && num == ugoiraList.length -1) playUgoira = false;
+        
+        if (!playUgoira) break;
+        num++;
+        illustNum = num;
+    }
+
+    function sleep(delay) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve();
+            }, delay);
+        })
+    }
 }
 
 function rotationImage(angle) {
