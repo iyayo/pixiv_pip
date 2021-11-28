@@ -87,6 +87,11 @@ function restore(){
         } else {
             document.getElementById("number_edge_color").value = "#000000";
         }
+
+        if (storage.setting.run_trigger != undefined) {
+            document.querySelector(`option[value=${storage.setting.run_trigger}]`).selected = true;
+        }
+
     });
 }
 
@@ -105,7 +110,8 @@ function save() {
         number_font: document.getElementById("number_font").value,
         number_size: document.getElementById("number_size").value,
         number_text_color: document.getElementById("number_text_color").value,
-        number_edge_color: document.getElementById("number_edge_color").value
+        number_edge_color: document.getElementById("number_edge_color").value,
+        run_trigger: document.getElementById("run_trigger").value
     }
 
     chrome.storage.local.set({"setting": setting}, function () {});

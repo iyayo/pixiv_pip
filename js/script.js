@@ -32,7 +32,8 @@ let setting = {
     ugoira_source: "600x600",
     ugoira_loop: true,
     custom_button: false,
-    button_allocation: "play_pause"
+    button_allocation: "play_pause",
+    run_trigger: "mouseenter"
 }
 
 chrome.storage.local.get(["setting"], (storage) => {
@@ -61,19 +62,37 @@ window.onload = function () {
         artworks.forEach(element => {
             if (element.querySelector('img, div[style*="background-image"]') === null && !element.style.backgroundImage) return;
 
-            element.onmouseenter = function (event) {
-                if (prevSrc === event.currentTarget.href) return;
-
-                prevSrc = event.currentTarget.href;
-
-                Promise.resolve()
-                    .then(() => getIllustInfo(event.currentTarget.href.split("https://www.pixiv.net/artworks/")[1]))
-                    .then(res => {
-                        if (setting.image_source === "original") return createUrlList(res.illustType, res.urls.original, res.id, res.pageCount);
-                        else if (setting.image_source === "regular") return createUrlList(res.illustType, res.urls.regular, res.id, res.pageCount);
-                        else if (setting.image_source === "small") return createUrlList(res.illustType, res.urls.small, res.id, res.pageCount);
-                    })
-                    .then(msg => sendMsg(msg))
+            if (setting.run_trigger === "mouseenter") {
+                element.onmouseenter = function (event) {
+                    if (prevSrc === event.currentTarget.href) return;
+    
+                    prevSrc = event.currentTarget.href;
+    
+                    Promise.resolve()
+                        .then(() => getIllustInfo(event.currentTarget.href.split("https://www.pixiv.net/artworks/")[1]))
+                        .then(res => {
+                            if (setting.image_source === "original") return createUrlList(res.illustType, res.urls.original, res.id, res.pageCount);
+                            else if (setting.image_source === "regular") return createUrlList(res.illustType, res.urls.regular, res.id, res.pageCount);
+                            else if (setting.image_source === "small") return createUrlList(res.illustType, res.urls.small, res.id, res.pageCount);
+                        })
+                        .then(msg => sendMsg(msg))
+                }
+            } else if (setting.run_trigger === "click") {
+                element.onclick = function (event) {
+                    event.preventDefault();
+                    if (prevSrc === event.currentTarget.href) return;
+    
+                    prevSrc = event.currentTarget.href;
+    
+                    Promise.resolve()
+                        .then(() => getIllustInfo(event.currentTarget.href.split("https://www.pixiv.net/artworks/")[1]))
+                        .then(res => {
+                            if (setting.image_source === "original") return createUrlList(res.illustType, res.urls.original, res.id, res.pageCount);
+                            else if (setting.image_source === "regular") return createUrlList(res.illustType, res.urls.regular, res.id, res.pageCount);
+                            else if (setting.image_source === "small") return createUrlList(res.illustType, res.urls.small, res.id, res.pageCount);
+                        })
+                        .then(msg => sendMsg(msg))
+                }
             }
         });
     }
