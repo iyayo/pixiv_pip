@@ -2,7 +2,7 @@
   "name": "pixiv PiP",
   "version": "2.4",
   "manifest_version": 2,
-  "description": "pixivのイラストをPiP（Picture-in-Picture）で表示する拡張機能です。",
+  "description": "pixivのイラスト＆うごイラをPiP（Picture-in-Picture）で表示する拡張機能です。",
   "icons" : {
     "16" : "icon/icon16.png",
     "32" : "icon/icon32.png",
