@@ -79,3 +79,17 @@ input[type="checkbox"]:checked + label > div {
 #switch_interval, #ugoira_interval {
     width: 50px;
 }
+
+.donate {
+    padding: 8px;
+    border-radius: 3px;
+    background-color: #0096fa;
+    color: #fff;
+    font-size: 14px;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.donate:hover {
+    background-color: #0086e0;
+}
