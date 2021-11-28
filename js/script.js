@@ -23,6 +23,8 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+let isPiP = false;
+
 let setting = {
     image_source: "regular",
     image_longside: "480",
@@ -56,6 +58,8 @@ window.onload = function () {
 
     setEventHandlers();
 
+    sendMsg("isPiP");
+
     function setEventHandlers() {
         let artworks = document.querySelectorAll('a[href^="/artworks/"]');
 
@@ -64,7 +68,7 @@ window.onload = function () {
 
             if (setting.run_trigger === "mouseenter") {
                 element.onmouseenter = function (event) {
-                    if (prevSrc === event.currentTarget.href) return;
+                    if (!isPiP || prevSrc === event.currentTarget.href) return;
     
                     prevSrc = event.currentTarget.href;
     
@@ -79,7 +83,10 @@ window.onload = function () {
                 }
             } else if (setting.run_trigger === "click") {
                 element.onclick = function (event) {
+                    if (!isPiP) return;
+
                     event.preventDefault();
+
                     if (prevSrc === event.currentTarget.href) return;
     
                     prevSrc = event.currentTarget.href;
@@ -175,8 +182,16 @@ window.onload = function () {
     }
 
     function sendMsg(msg) {
-        chrome.runtime.sendMessage({ message: msg }, function () { });
+        chrome.runtime.sendMessage({ message: msg }, function (response) {
+            if (msg !== "isPiP") return;
+
+            isPiP = response;
+        })
     }
+
+    chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+        isPiP = request.isPiP;
+    })
 
     chrome.storage.local.onChanged.addListener(function (object) {
         if (object.setting) {

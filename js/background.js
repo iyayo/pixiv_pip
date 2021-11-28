@@ -1,3 +1,5 @@
+let isPiP = false;
+
 let setting = {
     image_source: "regular",
     image_longside: "480",
@@ -126,6 +128,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         else document.exitPictureInPicture();
     } else if (request.message[0].type == "ugoira_progress") {
         drawUgoiraProgress(request.message[0].value);
+    } else if (request.message == "isPiP") {
+        sendResponse(isPiP);
     } else {
         illustList = request.message;
         switchPause(interval);
@@ -235,12 +239,27 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 });
 
 video.addEventListener("enterpictureinpicture", function () {
+    isPiP = true;
+
+    chrome.tabs.query({}, function(tabs) {
+        for (let i = 0; i < tabs.length; i++) {
+            chrome.tabs.sendMessage(tabs[i].id, {isPiP: isPiP}) 
+        }
+    })
+
     // if (illustLength > 1) {
     //     interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
     // }
 })
 
 video.addEventListener("leavepictureinpicture", function () {
+    isPiP = false;
+
+    chrome.tabs.query({}, function(tabs) {
+        for (let i = 0; i < tabs.length; i++) {
+            chrome.tabs.sendMessage(tabs[i].id, {isPiP: isPiP})
+        }
+    })
     switchPause(interval);
 });
 
