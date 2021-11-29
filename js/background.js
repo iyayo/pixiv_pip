@@ -16,7 +16,8 @@ let setting = {
     number_font: "monospace",
     number_size: 5,
     number_text_color: "#ffffff",
-    number_edge_color: "#000000"
+    number_edge_color: "#000000",
+    window_size: "fixed"
 }
 
 let filter_list = {
@@ -303,9 +304,14 @@ function clearCanvas(width, height) {
 }
 
 function setCanvas(width, height) {
+    if (setting.window_size === "fixed") {
+        canvas.width = 1000;
+        canvas.height = 1000;
+    } else if (setting.window_size === "variable") {
         canvas.width = width;
         canvas.height = height;
     }
+}
 
 function drawImg(x, y) {
     if (!x) {
@@ -315,6 +321,11 @@ function drawImg(x, y) {
     if (!y) {
         y = 0;
     }
+
+    if (setting.window_size === "fixed") {
+        if (img.width >= img.height) ctx.drawImage(img, x, y + (canvas.height - canvas.width * (img.height / img.width)) / 2, canvas.width, canvas.width * (img.height / img.width));
+        else ctx.drawImage(img, x + (canvas.width - canvas.height * (img.width / img.height)) / 2, y, canvas.height * (img.width / img.height), canvas.height);
+    } else if (setting.window_size === "variable") {
         ctx.drawImage(img, x, y, img.width, img.height);
     }
 }
@@ -347,22 +358,22 @@ function drawIllustNumber(x, y) {
                 case "top_right":
                     ctx.textAlign = "end";
                     ctx.textBaseline = "top";
-                    ctx.strokeText(`${illustNum}/${illustLength}`, x + img.width, y);
-                    ctx.fillText(`${illustNum}/${illustLength}`, x + img.width, y); 
+                    ctx.strokeText(`${illustNum}/${illustLength}`, x + canvas.width, y);
+                    ctx.fillText(`${illustNum}/${illustLength}`, x + canvas.width, y); 
                     break;
     
                 case "bottom_left":
                     ctx.textAlign = "start";
                     ctx.textBaseline = "bottom";
-                    ctx.strokeText(`${illustNum}/${illustLength}`, x, y + img.height);
-                    ctx.fillText(`${illustNum}/${illustLength}`, x, y + img.height); 
+                    ctx.strokeText(`${illustNum}/${illustLength}`, x, y + canvas.height);
+                    ctx.fillText(`${illustNum}/${illustLength}`, x, y + canvas.height); 
                     break;
     
                 case "bottom_right":
                     ctx.textAlign = "end";
                     ctx.textBaseline = "bottom";
-                    ctx.strokeText(`${illustNum}/${illustLength}`, x + img.width, y + img.height);
-                    ctx.fillText(`${illustNum}/${illustLength}`, x + img.width, y + img.height); 
+                    ctx.strokeText(`${illustNum}/${illustLength}`, x + canvas.width, y + canvas.height);
+                    ctx.fillText(`${illustNum}/${illustLength}`, x + canvas.width, y + canvas.height); 
                     break;
             }    
         }    

@@ -92,6 +92,10 @@ function restore(){
             document.querySelector(`option[value=${storage.setting.run_trigger}]`).selected = true;
         }
 
+        if (storage.setting.window_size != undefined) {
+            document.querySelector(`option[value=${storage.setting.window_size}]`).selected = true;
+        }
+
     });
 }
 
@@ -111,7 +115,8 @@ function save() {
         number_size: document.getElementById("number_size").value,
         number_text_color: document.getElementById("number_text_color").value,
         number_edge_color: document.getElementById("number_edge_color").value,
-        run_trigger: document.getElementById("run_trigger").value
+        run_trigger: document.getElementById("run_trigger").value,
+        window_size: document.getElementById("window_size").value
     }
 
     chrome.storage.local.set({"setting": setting}, function () {});
