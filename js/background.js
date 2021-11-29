@@ -195,7 +195,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                                 startInterval(illustList[0].type);
                             }
                         } else if (illustList[0].type === "ugoira") {
-                            startUgoira(illustList, illustNum, illustLength);
+                            if (illustNum < illustLength) startUgoira(illustList, illustNum, illustLength);
+                            else if (illustNum == illustLength) startUgoira(illustList, 1, illustLength);
+                            
                         }
                     }
                 });
@@ -287,9 +289,9 @@ function clearCanvas(width, height) {
 }
 
 function setCanvas(width, height) {
-    canvas.width = width;
-    canvas.height = height;
-}
+        canvas.width = width;
+        canvas.height = height;
+    }
 
 function drawImg(x, y) {
     if (!x) {
@@ -299,7 +301,7 @@ function drawImg(x, y) {
     if (!y) {
         y = 0;
     }
-    ctx.drawImage(img, x, y, img.width, img.height);
+        ctx.drawImage(img, x, y, img.width, img.height);
     save_canvas = canvas.toDataURL("image/jpeg");
 }
 
