@@ -117,8 +117,6 @@ chrome.commands.onCommand.addListener(function (command) {
 
 // Content Scriptと通信
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    playUgoira = false;
-
     function startInterval(type) {
         if (type === "illust") interval = setInterval(switchImage, setting.switch_interval * 1000, illustList, illustLength);
         else if (type === "ugoira") startUgoira(illustList, illustNum, illustLength);
@@ -135,6 +133,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     } else {
         illustList = request.message;
         switchPause(interval);
+        playUgoira = false;
         illustNum = 1;
         illustLength = illustList.length - 1;
 
