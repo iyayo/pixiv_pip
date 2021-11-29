@@ -62,6 +62,7 @@ video.muted = true;
 video.srcObject = canvas.captureStream();
 
 let interval;
+let timeout;
 let illustNum;
 let illustLength;
 let illustList;
@@ -134,6 +135,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         illustList = request.message;
         switchPause(interval);
         playUgoira = false;
+        clearTimeout(timeout);
         illustNum = 1;
         illustLength = illustList.length - 1;
 
@@ -153,12 +155,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                                 } else if (playUgoira) {
                                     playUgoira = false;
                                 } else {
-                                    if (illustNum < illustLength) {
-                                        startInterval(illustList[0].type);
-                                    } else if (illustNum == illustLength) {
-                                        illustNum = 1;
-                                        img.src = illustList[illustNum];
-                                        startInterval(illustList[0].type);
+                                    if (illustList[0].type === "illust"){
+                                        if (illustNum < illustLength) {
+                                            startInterval(illustList[0].type);
+                                        } else if (illustNum == illustLength) {
+                                            illustNum = 1;
+                                            img.src = illustList[illustNum];
+                                            startInterval(illustList[0].type);
+                                        }
+                                    } else if (illustList[0].type === "ugoira") {
+                                        if (illustNum < illustLength) startUgoira(illustList, illustNum, illustLength);
+                                        else if (illustNum == illustLength) startUgoira(illustList, 1, illustLength);
                                     }
                                 }
                                 break;
@@ -408,7 +415,7 @@ async function startUgoira(ugoiraList, num, length) {
 
     function sleep(delay) {
         return new Promise((resolve, reject) => {
-            setTimeout(() => {
+            timeout = setTimeout(() => {
                 resolve();
             }, delay);
         })
