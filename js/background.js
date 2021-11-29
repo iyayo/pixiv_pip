@@ -276,6 +276,7 @@ video.addEventListener("leavepictureinpicture", function () {
         }
     })
     switchPause(interval);
+    playUgoira = false;
 });
 
 function draw(clear, width, height) {
